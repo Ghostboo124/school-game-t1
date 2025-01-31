@@ -1,4 +1,4 @@
-# Games made in school for t1 or s1, not sure
+# Games made in school for t1
 
 ### High Low
 
