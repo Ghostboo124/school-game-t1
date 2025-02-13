@@ -11,3 +11,13 @@ A Game where you have to chose this, or that
 ### Personalised Greeting
 
 Gives you a personalised greeting based on your name and age
+
+### Mini Project
+
+Not finished
+
+### "Toutorial"
+-# Uses the toutorial-images directory
+
+A Game where you click an apple that spawns at a random location
+It has a win counter and a lose counter, the win counter increments when you click the apple, and the lose counter increments when you click anywhere else and get it wrong
