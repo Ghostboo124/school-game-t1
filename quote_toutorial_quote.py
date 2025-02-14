@@ -15,6 +15,29 @@ winCounter = 0
 loseCounter = 0
 start = True
 
+def place_object(actor) -> None:
+    max_attempts = 100  # Maximum number of attempts to place the object without collision
+    for _ in range(max_attempts):
+        if actor == apple:
+            actor.x, actor.y = (randint(35, 768), randint(40, 565))
+        elif actor == pineapple:
+            actor.x, actor.y = (randint(50,750), randint(80,515))
+        elif actor == orange:
+            actor.x, actor.y = (randint(50, 750), randint(59,535))
+        if not check_collision(actor):
+            return
+    print(f"Failed to place {actor.image} without collision after {max_attempts} attempts, placing it at (200, 200)")
+    actor.x, actor.y = (200, 200)
+
+def check_collision(actor) -> bool:
+    if actor != apple and apple.collidepoint((actor.x, actor.y)):
+        return True
+    if actor != pineapple and pineapple.collidepoint((actor.x, actor.y)):
+        return True
+    if actor != orange and orange.collidepoint((actor.x, actor.y)):
+        return True
+    return False
+
 def draw() -> None:
     if variables.start:
         for i in range(0,4):
