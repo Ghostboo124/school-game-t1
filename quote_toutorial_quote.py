@@ -13,6 +13,7 @@ pineapple = Actor("pineapple")
 orange = Actor("orange")
 winCounter = 0
 loseCounter = 0
+highScore = 0
 start = True
 
 def place_object(actor) -> None:
@@ -41,9 +42,9 @@ def check_collision(actor) -> bool:
 def draw() -> None:
     if variables.start:
         for i in range(0,4):
-            place_apple()
-            place_pineapple()
-            place_orange()
+            place_object(apple)
+            place_object(pineapple)
+            place_object(orange)
         variables.start = False
     screen.clear()
     apple.draw()
@@ -52,51 +53,36 @@ def draw() -> None:
     t0 = time.time()
     counter1 = variables.font.render(f'Win Counter: {variables.winCounter}', True, pygame.Color(255,255,255))
     counter2 = variables.font.render(f'Lose Counter: {variables.loseCounter}', True, pygame.Color(255,255,255))
+    counter3 = variables.font.render(f'High Score: {variables.highScore}', True, pygame.Color(255,255,255))
     print('time needed for Font creation :', time.time()-t0)
     screen.blit(counter1, (10, 10))
-    screen.blit(counter2, (10, 30))
-
-def place_apple() -> None:
-    apple.x, apple.y = (randint(35, 768), randint(40, 565))
-    if orange.collidepoint((apple.x, apple.y)):
-        print("Apple has collided with the orange")
-        place_apple()
-    if pineapple.collidepoint((apple.x, apple.y)):
-        print("Apple has collided with the pineapple")
-        place_apple()
-
-def place_pineapple() -> None:
-    pineapple.x, pineapple.y = (randint(50,750), randint(80,515))
-    if orange.collidepoint((pineapple.x, pineapple.y)):
-        print("Pineapple has collided with the orange")
-        place_pineapple()
-    if apple.collidepoint((pineapple.x, pineapple.y)):
-        print("Pineapple has collided with the apple")
-        place_pineapple()
-
-def place_orange() -> None:
-    orange.x, orange.y = (randint(50, 750), randint(59,535))
-    if pineapple.collidepoint((orange.x, orange.y)):
-        print("Orange has collided with the pineapple")
-        place_orange()
-    if apple.collidepoint((orange.x, orange.y)):
-        print("Orange has collided with the apple")
-        place_orange()
+    screen.blit(counter2, (10, 30)) 
+    screen.blit(counter3, (10, 50))
 
 def on_mouse_down(pos) -> None:
     if apple.collidepoint(pos):
         print('Good Shot!')
-        place_apple()
+        place_object(apple)
         variables.winCounter += 1
+        if variables.winCounter > variables.highScore:
+            print("You beat your high score!")
+            variables.highScore = variables.winCounter
+        
     elif pineapple.collidepoint(pos):
         print('Good Shot!')
-        place_pineapple()
+        place_object(pineapple)
         variables.winCounter += 1
+        if variables.winCounter > variables.highScore:
+            print("You beat your high score!")
+            variables.highScore = variables.winCounter
     elif orange.collidepoint(pos):
         print('Good Shot!')
-        place_orange()
+        place_object(orange)
         variables.winCounter += 1
+        if variables.winCounter > variables.highScore:
+            print("You beat your high score!")
+            variables.highScore = variables.winCounter
     else:
         print("You missed!")
         variables.winCounter = 0    
-        variables.loseCounter += 1
+        variables.loseCounter += 1 
