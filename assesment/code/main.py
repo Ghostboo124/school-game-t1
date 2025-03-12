@@ -23,7 +23,7 @@ try:
     print('Trying to import typing')
     # Need to try typing then typing_extensions for backwards compatability
     try:
-        from typing import Optional, NewType
+        from typing import Optional
         print('Typing has been imported succesfully')
     except ImportError:
         try:
@@ -44,21 +44,24 @@ running = True
 dt = 0
 
 # Code
-def exit(details: Optional[Exception | str | None] = None, errorlevel: int = 5) -> int:
+def exit(errorlevel: int = 5, details: Optional[Exception | str | None] = None) -> int:
     """
     My custom exit function with detail printing
     Args:
+        errorlevel: The code to exit with, defaults to 5 (unknown error)
         details: The details of the error code (Optional)
-        errorlevel: The code to exit with, defaults to 0 (no error)
     """
     if errorlevel != 0:
-        print(f"Exiting with error code: {errorlevel}")
+        sys.stderr.write(f"Exiting with error code: {errorlevel}\n")
     if details != None:
-        print(f"Type: {type(details)}, Details:\n\t{details}")
+        if type(details) != str:
+            sys.stderr.write(f"Type: {type(details)}, Details:\n\t{details}")
+        else:
+            sys.stderr.write(f"Details:\n\t{details}")
     sys.exit(errorlevel)
 
 class Actor(pygame.sprite.Sprite):
-    def __init__(self, image: str, name: str, disabled: True | False, pos: Optional[tuple[int, int]] = (0,0), zoom: Optional[float] = 1.0, rotation: Optional[float] = 0.0):
+    def __init__(self, image: str, name: str, disabled: True | False, pos: Optional[tuple[int, int]] | Optional[numpy.ndarray] = (0,0), zoom: Optional[float] = 1.0, rotation: Optional[float] = 0.0):
         """
         An Actor class so that this code is nicely wrapped up instead of having multiple instances existing in the main function
         Args:
@@ -75,7 +78,11 @@ class Actor(pygame.sprite.Sprite):
             exit(e, 2)
         self.imageBig = pygame.transform.rotozoom(self.image, rotation, zoom)
         self.name = name
+        if type(pos) != numpy.ndarray:
+            pos = numpy.array(pos)
+            print(pos)
         self.pos = pos
+        print(self.pos[0])
         self.x = self.pos[0]
         self.y = self.pos[1]
         self.destroyed = False
@@ -88,10 +95,10 @@ class Actor(pygame.sprite.Sprite):
         if self.destroyed == False:
             if self.x < 0:
                 #self.x = 0
-                self.destroy()
-            elif self.x > screen.get_width() - self.imageBig.get_width() - 40:
+                self.x = screen.get_width() - self.image.get_width() - 30
+            elif self.x > screen.get_width() - self.imageBig.get_width():
                 #self.x = screen.get_width() - self.image.get_width() - 40
-                self.destroy()
+                self.x = 0
 
             if self.y < 0:
                 #self.y = 0
@@ -121,20 +128,33 @@ class Actor(pygame.sprite.Sprite):
             else:
                 self.image = pygame.image.load(image).convert()
                 self.imageBig = pygame.transform.rotozoom(self.image, rotation, zoom)
-            self.x = x
-            self.y = y
+            self.pos = numpy.array((x, y))
+            self.x = self.pos[0]
+            self.y = self.pos[1]
     def destroy(self):
         self.destroyed = True
         self.image = ""
-        self.x, self.y = (60054854, 756483)
+        self.x, self.y = numpy.array((60054854, 756483))
         self.pos = (self.x, self.y)
         print(self.x, self.y)
+    
+    def iscolliding(self, object: numpy.ndarray | tuple):
+        # print(self.pos)
+        if type(object) == numpy.ndarray or type(object) == tuple and len(object) == 2:
+            print(f"({object[0], object[1]})")
+        elif type(object) != numpy.ndarray:
+            print(f"Wierd, the type of the object is {type(object)}")
+        elif len(object) != 2:
+            print(f"Wierd, the length is wrong: {len(object)}")
+        # print(object.pos)
+    def jump(self):
+        return NotImplementedError("jump function isn't implimented yet")
 
 spd = 2
 zoom = 2.0
-spNugget = Actor("images\\spNugget.png", "spNugget", zoom=zoom, pos=(15,15), disabled=False)
+spNugget = Actor("images\\spNugget.png", "spNugget", zoom=zoom, pos=numpy.array((0,380)), disabled=False)
 
-def main():
+def main(dt: float, fps: int) -> int:
     keys = pygame.key.get_pressed()
     if keys[pygame.K_LEFT] or keys[pygame.K_a]:
         kLeft = 1
@@ -144,46 +164,79 @@ def main():
         kRight = 1
     else:
         kRight = 0
-    if keys[pygame.K_UP] or keys[pygame.K_w]:
-        kUp = 1
-    else:
-        kUp = 0
-    if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-        kDown = 1
-    else:
-        kDown = 0
+    # if keys[pygame.K_UP] or keys[pygame.K_w]:
+    #     kUp = 1
+    # else:
+    #     kUp = 0
+    # if keys[pygame.K_DOWN] or keys[pygame.K_s]:
+    #     kDown = 1
+    # else:
+    #     kDown = 0
+    if keys[pygame.K_SPACE]:
+        spNugget.jump()
+    if keys[pygame.K_1]:
+        fps = 10
+    if keys[pygame.K_2]:
+        fps = 20
+    if keys[pygame.K_3]:
+        fps = 30
+    if keys[pygame.K_4]:
+        fps = 40
+    if keys[pygame.K_5]:
+        fps = 50
+    if keys[pygame.K_6]:
+        fps = 60
+    if keys[pygame.K_7]:
+        fps = 120
+    if keys[pygame.K_8]:
+        fps = 240
+    if keys[pygame.K_9]:
+        fps = 480
+    if keys[pygame.K_0]:
+        fps = 0
 
     moveH = kRight - kLeft
-    moveV = kDown - kUp
+    # moveV = kDown - kUp
 
-    Mag = math.sqrt((moveH * moveH)+(moveV * moveV))
+    Mag = math.sqrt((moveH * moveH))#+(moveV * moveV))
 
     if Mag == 0:
-        Mag = 1
+        Mag = 1 * dt
     
     #print((moveH/Mag) * spd, (moveV/Mag))
     
     moveX = (moveH/Mag) * spd
-    moveY = (moveV/Mag) * spd
+    # moveY = (moveV/Mag) * spd
 
-    spNugget.update(spNugget.x + moveX, spNugget.y + moveY, "images\\spNugget.png", zoom=zoom)
-    spNugget.draw()
+    if spNugget.destroyed == False:
+        spNugget.update(spNugget.x + moveX, spNugget.y, "images\\spNugget.png", zoom=zoom)
+        spNugget.draw()
+        # print(spNugget.pos)
+    return fps
+    
 
 if __name__ == "__main__":
     try:
+        tick = 0
+        spNugget.iscolliding(numpy.array((0, 0)))
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: running = False
             screen.fill("black")
-            main()
+            if tick != 0:
+                print(f"FPS: {clock.get_fps()} DT: {dt} Raw Time: {clock.get_rawtime()} Time: {clock.get_time()}")
+                fps = main(dt, fps)
+                dt = clock.tick(fps) / 1000
+            else:
+                dt = clock.tick(2) / 1000
+                fps = 60
+                tick += 1
             pygame.display.flip()
-            dt = clock.tick(60) / 1000
     except Exception as e:
         exit(e)
     except KeyboardInterrupt:
-        pygame.display.quit()
         pygame.quit()
         exit("Please don't keyboard interupt, closing safely")
-pygame.display.quit()
+    
 pygame.quit()
 exit(errorlevel=0)
