@@ -1,0 +1,175 @@
+{
+  "formatVersion": 3,
+  "id": "root",
+  "ideas": {
+    "1": {
+      "title": "Digital Technology",
+      "id": 1,
+      "attr": {
+        "position": [
+          -79,
+          -24,
+          1
+        ]
+      },
+      "ideas": {
+        "1": {
+          "title": "Genres",
+          "id": 3,
+          "ideas": {
+            "1": {
+              "title": "Platformer",
+              "id": 13,
+              "ideas": {
+                "1": {
+                  "title": "This is the one that i am probably going to chose as i find it enjoyable and it is easy to make",
+                  "id": 14
+                },
+                "2": {
+                  "title": "Subgenres",
+                  "id": 15,
+                  "ideas": {
+                    "2": {
+                      "title": "Run and gun",
+                      "id": 18,
+                      "ideas": {
+                        "1": {
+                          "title": "This is where you run through the level with a gun to shoot down enemies before they kill you, similar to Super Mario",
+                          "id": 22
+                        }
+                      }
+                    },
+                    "3": {
+                      "title": "Puzzle",
+                      "id": 20,
+                      "ideas": {
+                        "1": {
+                          "title": "This is a subgenre of Platformer where you solve puzzles to go through to new areas",
+                          "id": 21
+                        }
+                      }
+                    },
+                    "4": {
+                      "title": "Scrolling",
+                      "id": 23,
+                      "ideas": {
+                        "1": {
+                          "title": "This is where the screen scrolls, there are two types, vertical and side scrolling, you typically have to try to not get touched by the edge",
+                          "id": 24
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            },
+            "2": {
+              "title": "Shooter",
+              "id": 25,
+              "ideas": {
+                "1": {
+                  "title": "This is where you run around trying to shoot things to clear a level and win, similar to Doom",
+                  "id": 26
+                }
+              }
+            }
+          }
+        },
+        "2": {
+          "title": "Target Audience",
+          "id": 5,
+          "ideas": {
+            "1": {
+              "title": "5-13",
+              "id": 27,
+              "ideas": {
+                "1": {
+                  "title": "This is a hard age to target for as they haven't fully developed their brain so the puzzles have to be simplistic and teach them lessons",
+                  "id": 30
+                }
+              }
+            },
+            "2": {
+              "title": "13-18",
+              "id": 31,
+              "ideas": {
+                "1": {
+                  "title": "This is also a hard age to target for as they haven't fully discovered what they like yet, i am probably going to try to target this genre",
+                  "id": 32,
+                  "ideas": {}
+                }
+              }
+            },
+            "3": {
+              "title": "18+",
+              "id": 34,
+              "ideas": {
+                "1": {
+                  "title": "This is easier because they typically want something that they can hop onto quickly after a long day of work, however this is a very large age group",
+                  "id": 35
+                }
+              }
+            }
+          }
+        },
+        "-1": {
+          "title": "Assets",
+          "id": 4,
+          "ideas": {
+            "1": {
+              "title": "itch.io to download ones that other people made",
+              "id": 9,
+              "ideas": {
+                "1": {
+                  "title": "I am probably going to do this for the environment around me",
+                  "id": 12
+                }
+              }
+            },
+            "2": {
+              "title": "Aseprite to make them myself",
+              "id": 10,
+              "ideas": {
+                "1": {
+                  "title": "My main character is made by me with inspiration from ones found online",
+                  "id": 11
+                }
+              }
+            }
+          }
+        },
+        "-2": {
+          "title": "Ways the player can control the game",
+          "id": 7,
+          "ideas": {
+            "1": {
+              "title": "Using the Arrow Keys",
+              "id": 36,
+              "ideas": {
+                "1": {
+                  "title": "This is good because it is simple to understand, but some keyboards don't come with arrow keys on them, so this is not very good for compatability",
+                  "id": 37
+                }
+              }
+            },
+            "2": {
+              "title": "WASD",
+              "id": 40,
+              "ideas": {
+                "1": {
+                  "title": "This is good because it is used on most games, so most people will be able to use them, and the WASD keys are on every keyboard",
+                  "id": 41
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "attr": {
+    "theme": "default"
+  },
+  "title": "Digital Technology",
+  "links": []
+}

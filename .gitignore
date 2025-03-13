@@ -5,3 +5,7 @@ __pycache__/
 *.py[cod]
 *$py.class
 desktop.ini
+*.tmp
+itch.io-free-assets/
+!itch.io-free-assets/*.zip
+~*.docx
