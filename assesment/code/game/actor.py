@@ -30,16 +30,17 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int
 class Actor(pygame.sprite.Sprite):
     def __init__(self, image: str, name: str, disabled: bool, pos: Optional[tuple[int, int]] | Optional[numpy.ndarray] = (0,0), zoom: Optional[float] = 1.0, rotation: Optional[float] = 0.0, m: int = 1, v: int = 5, spd: int = 1):
         """
-        An Actor class so that this code is nicely wrapped up instead of having multiple instances existing in the main function
+        An Actor class so that this code is nicely wrapped up instead of having multiple instances
         Args:
             image: The image to set this Actor to be displayed as, string with the path to the image
-            disabled: Is the Actor disabled, can be changed internally
             name: The name of the Actor, string
-            pos: The position to set the Actor to in the format of (x, y), (Defaults to (0,0))
-            zoom: How much to zoom the image in by, Optional, defaults to 1.0
-            rotation: How much to rotate the image, Optional, defaults to 0.0
-            m: Mass, int
-            v: Velocity, int
+            disabled: Is the Actor disabled, boolean
+            pos: The position to set the Actor to in the format of (x, y), (Defaults to (0,0)), either a tuple of a numpy array
+            zoom: How much to zoom the image in by, Optional, defaults to 1.0, float
+            rotation: How much to rotate the image, Optional, defaults to 0.0, float
+            m: Mass, defaults to 1, int
+            v: Velocity, defaults to 5, int
+            spd: The speed of the Actor, defaults to 1, int
         """
         super().__init__()
         try:
@@ -101,7 +102,7 @@ class Actor(pygame.sprite.Sprite):
             self.pos = numpy.array((x, y))
             self.x = self.pos[0]
             self.y = self.pos[1]
-            
+
     def destroy(self):
         self.disabled = True
         self.image = ""
