@@ -1,5 +1,6 @@
 import pygame
 import math
+import numpy
 from queue import PriorityQueue
 
 WIDTH = 700
@@ -16,6 +17,12 @@ PURPLE = (128, 0, 128)
 ORANGE = (255, 165 ,0)
 GREY = (128, 128, 128)
 TURQUOISE = (64, 224, 208)
+
+def abs(n) -> int:
+    """
+    Returns the absolute value
+    """
+    return numpy.sqrt(numpy.square(n)) # return the square root of the square on n
 
 class Spot:
     def __init__(self, row, col, width, total_rows):
@@ -74,16 +81,35 @@ class Spot:
         self.neighbors = []
         if self.row < self.total_rows - 1 and not grid[self.row + 1][self.col].is_barrier(): # DOWN
             self.neighbors.append(grid[self.row + 1][self.col])
+        if self.row > 0 and not grid[self.row - 1][self.col].is_barrier(): # UP
+            self.neighbors.append(grid[self.row - 1][self.col])
 
-    if self.row > 0 and not grid[self.row - 1][self.col].is_barrier(): # UP
-        self.neighbors.append(grid[self.row - 1][self.col])
+        if self.col < self.total_rows - 1 and not grid[self.row][self.col + 1].is_barrier(): # RIGHT
+            self.neighbors.append(grid[self.row][self.col + 1])
 
-    if self.col < self.total_rows - 1 and not grid[self.row][self.col + 1].is_barrier(): # RIGHT
-        self.neighbors.append(grid[self.row][self.col + 1])
+        if self.col > 0 and not grid[self.row][self.col - 1].is_barrier(): # LEFT
+            self.neighbors.append(grid[self.row][self.col - 1])
 
-    if self.col > 0 and not grid[self.row][self.col - 1].is_barrier(): # LEFT
-        self.neighbors.append(grid[self.row][self.col - 1])
+        def __lt__(self, other):
+            return False
 
-    def __lt__(self, other):
-        return False
- 
+def h(p1, p2):
+    x1, y1 = p1
+    x2, y2 = p2
+    return abs(x1 - x2) + abs(y1 - y2)
+
+def reconstructPath(cameFrom, current: Spot, draw):
+    while current in cameFrom:
+        current = cameFrom[current]
+        current.make_path()
+        draw()
+
+def astar(draw, grid, start: Spot, end):
+    count = 0
+    openSet = PriorityQueue()
+    openSet.put((0, count, start))
+    cameFrom = {}
+    gScore = {spot: float("inf") for row in grid for spot in row}
+    gScore[start] = 0
+    fScore = {spot: float("inf") for row in grid for spot in row}
+    fScore[start] = h(start.)
