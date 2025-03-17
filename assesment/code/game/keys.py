@@ -1,15 +1,16 @@
 from numpy import sqrt
 from pygame import K_LEFT, K_RIGHT, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT
 from sys import exit, stderr
-if __name__ == "actor.py":
+
+try:
+    from typing import Optional, TYPE_CHECKING
+except (ImportError, OSError):
+    from typing_extensions import Optional
+
+if TYPE_CHECKING:
     from .actor import Actor
 else:
     class Actor: None
-
-try:
-    from typing import Optional
-except (ImportError, OSError):
-    from typing_extensions import Optional
 
 def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int:
     """
@@ -27,11 +28,14 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int
             stderr.write(f"Details:\n\t{details}")
     exit(errorlevel)
 
-def keychecks(keys, actor: Actor, spd, dt, blockJump: Optional[bool] = False) -> float:
+def keychecks(keys, actor: Actor, spd, dt: Optional[float] = None, blockJump: Optional[bool] = False) -> float:
     """
     Game Files
     """
-    print(__name__)
+    # Has dt been supplied?
+    if dt == None:
+        dt = 60/1000
+
     if keys[K_LEFT] or keys[K_a]:
         kLeft = 1
     else:

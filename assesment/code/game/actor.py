@@ -1,10 +1,12 @@
 """
 The Actor file
 """
-from .g import screen
+
 import pygame, numpy
 from sys import exit, stderr
+from .g import screen
 from .keys import keychecks
+from .background import drawBackgrounds, backgrounds
 
 try:
     from typing import Optional
@@ -75,7 +77,7 @@ class Actor(pygame.sprite.Sprite):
             if self.y < 0:
                 #self.y = 0
                 self.destroy()
-            elif self.y > screen.get_height() - self.imageBig.get_height() - 40: ### These haven't been changed over
+            elif self.y > screen.get_height() - self.imageBig.get_height() - 40: ### These haven't been replaced by the character getting destroyed
                 #self.y = screen.get_height() - self.image.get_height() - 40
                 self.destroy()
 
@@ -138,7 +140,8 @@ class Actor(pygame.sprite.Sprite):
                     m = 1
                     isJump = False
                 keys = pygame.key.get_pressed()
-                moveX = keychecks(keys, self, m, v, self.spd, self.dt, True)
+                moveX = keychecks(keys, self, self.spd, blockJump=True)
+                drawBackgrounds(backgrounds)
                 self.update(self.x + moveX, self.y, zoom=2)
                 self.draw()
                 pygame.display.flip()

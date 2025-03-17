@@ -20,7 +20,8 @@ try:
     import time
     import os
     import sys
-    from game import screen, Actor, keychecks
+    from game import *
+    from game.background import backgrounds
     #from game import screen, pygame, math, numpy
     print('Trying to import typing')
     # Need to try typing then typing_extensions for backwards compatability
@@ -35,7 +36,7 @@ try:
             print('typing_extensions has failed to import, printing details now:\n\t' + e)
 except Exception as e:
     # Can't use my exit function here, and I am not willing to place it earlier for organisational reasons
-    print("Unknown error occured, printing details now:\n\t" + e)
+    print("Unknown error occured, printing details now:\n\t", e)
     sys.exit(1)
 
 # Initialisation
@@ -69,9 +70,11 @@ zoom = 2.0
 v = 5
 m = 1
 spNugget = Actor(os.path.join("images", "spNugget.png"), "spNugget", False, numpy.array((0, 380)), zoom, rot, m, v, spd)
+
 def main(dt: float, fps: int) -> int:
     keys = pygame.key.get_pressed()
     moveX = keychecks(keys, spNugget, spd, dt, False)
+    drawBackgrounds(backgrounds)
 
     if spNugget.disabled == False:
         spNugget.update(spNugget.x + moveX, spNugget.y, "images\\spNugget.png", zoom=zoom)
