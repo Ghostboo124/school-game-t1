@@ -2,7 +2,7 @@
 The required files for my game
 """
 
-from .g import screen
+from .g import screen, musicManager
 from .keys import keychecks
 from .actor import Actor
 from .background import bg, drawBackgrounds

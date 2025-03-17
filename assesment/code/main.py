@@ -18,7 +18,7 @@ try:
     import time
     import os
     import sys
-    from game import Actor, keychecks, drawBackgrounds, screen
+    from game import Actor, keychecks, drawBackgrounds, screen, musicManager
     from game.background import backgrounds
     print('Trying to import typing')
     # Need to try typing then typing_extensions for backwards compatibility
@@ -39,6 +39,7 @@ except Exception as e:
 # Initialisation
 pygame.init()
 # Screen has been defined in the `game` module
+# musicManager has been defined in the `game` module
 clock = pygame.time.Clock()
 running = True
 dt = 0
@@ -67,12 +68,14 @@ zoom = 2.0
 v = 10
 m = 1
 spNugget = Actor(os.path.join("images", "spNugget.png"), "spNugget", False, numpy.array((0, 380)), zoom, rot, m, v, spd)
+# spSkele = Actor(os.path.join("images", ""), "spSkele", False, numpy.array((screen.get_width() - 50, 380)), 2, 0, 1, 5, 1)
 
 def main(dt: float, fps: int) -> int:
     keys = pygame.key.get_pressed()
     moveX = keychecks(keys, spNugget, spd, dt, False)
     drawBackgrounds(backgrounds)
 
+    # spNugget.destroy()
     if spNugget.disabled == False:
         spNugget.applyGravity(moveX/2)
         spNugget.update(spNugget.x + moveX, spNugget.y, "images\\spNugget.png", zoom=zoom)
@@ -85,6 +88,8 @@ if __name__ == "__main__":
     try:
         tick = 0
         spNugget.iscolliding(numpy.array((0, 0)))
+        musicManager.loadAndPlay(os.path.join("music", "chill4.ogg"), "Chill No.4", -1)
+        # musicManager.loadAndPlay(os.path.join("music", "credence.ogg"), "Credence (For  the Uninitiated)", -1)
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: running = False
