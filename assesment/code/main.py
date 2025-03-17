@@ -11,32 +11,29 @@ Error Codes:
 
 # Imports
 try:
-    #import pgzero
     import pygame
-    #import pgzrun
     import random
     import math
     import numpy
     import time
     import os
     import sys
-    from game import *
+    from game import Actor, keychecks, drawBackgrounds, screen
     from game.background import backgrounds
-    #from game import screen, pygame, math, numpy
     print('Trying to import typing')
-    # Need to try typing then typing_extensions for backwards compatability
+    # Need to try typing then typing_extensions for backwards compatibility
     try:
         from typing import Optional
-        print('Typing has been imported succesfully')
+        print('Typing has been imported successfully')
     except ImportError:
         try:
             from typing_extensions import Optional
             print('Typing failed, falling back to typing_extensions')
         except Exception as e:
-            print('typing_extensions has failed to import, printing details now:\n\t' + e)
+            print(f'typing_extensions has failed to import, printing details now:\n\t{e}')
 except Exception as e:
     # Can't use my exit function here, and I am not willing to place it earlier for organisational reasons
-    print("Unknown error occured, printing details now:\n\t", e)
+    print(f"Unknown error occured, printing details now:\n\t{e}")
     sys.exit(1)
 
 # Initialisation
@@ -47,7 +44,7 @@ running = True
 dt = 0
 debug = 0
 
-# Code
+# Custom Exit Function
 def exit(errorlevel: int = -1, details: Optional[Exception | str | None] = None) -> int:
     """
     My custom exit function with detail printing
@@ -57,8 +54,8 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str | None] = None)
     """
     if errorlevel != 0:
         sys.stderr.write(f"Exiting with error code: {errorlevel}\n")
-    if details != None:
-        if type(details) != str:
+    if details is not None:
+        if not isinstance(details, str):
             sys.stderr.write(f"Type: {type(details)}, Details:\n\t{details}")
         else:
             sys.stderr.write(f"Details:\n\t{details}")
@@ -67,7 +64,7 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str | None] = None)
 spd = 2
 rot = 0
 zoom = 2.0
-v = 5
+v = 10
 m = 1
 spNugget = Actor(os.path.join("images", "spNugget.png"), "spNugget", False, numpy.array((0, 380)), zoom, rot, m, v, spd)
 
@@ -77,12 +74,12 @@ def main(dt: float, fps: int) -> int:
     drawBackgrounds(backgrounds)
 
     if spNugget.disabled == False:
+        spNugget.applyGravity(moveX/2)
         spNugget.update(spNugget.x + moveX, spNugget.y, "images\\spNugget.png", zoom=zoom)
         spNugget.draw()
         if debug:
             print(spNugget.pos)
     return fps
-    
 
 if __name__ == "__main__":
     try:
@@ -105,7 +102,7 @@ if __name__ == "__main__":
         exit(-1, e)
     except KeyboardInterrupt:
         pygame.quit()
-        exit("Please don't keyboard interupt, closing safely")
-    
-pygame.quit()
-exit(errorlevel=0)
+        exit("Please don't keyboard interrupt, closing safely")
+
+    pygame.quit()
+    exit(errorlevel=0)

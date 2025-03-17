@@ -7,14 +7,15 @@ from .g import screen
 
 try:
     from typing import Optional
-except:
+except ImportError:
     try:
         print("Error whilst importing typing!\nFalling back to typing_extensions")
         from typing_extensions import Optional
-    except:
+    except ImportError:
         print("Error has occured whilst importing typing_extensions!")
         print("Using internal typing, this may not be up to date, please fix your python.")
         from .__typing import Optional
+
 class bg:
     def __init__(self, image: str, xchange: Optional[int] = None):
         """

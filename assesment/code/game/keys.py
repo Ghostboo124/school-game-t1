@@ -10,7 +10,7 @@ except (ImportError, OSError):
 if TYPE_CHECKING:
     from .actor import Actor
 else:
-    class Actor: None
+    class Actor: pass
 
 def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int:
     """
@@ -21,8 +21,8 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int
     """
     if errorlevel != 0:
         stderr.write(f"Exiting with error code: {errorlevel}\n")
-    if details != None:
-        if type(details) != str:
+    if details is not None:
+        if not isinstance(details, str):
             stderr.write(f"Type: {type(details)}, Details:\n\t{details}")
         else:
             stderr.write(f"Details:\n\t{details}")
@@ -33,8 +33,8 @@ def keychecks(keys, actor: Actor, spd, dt: Optional[float] = None, blockJump: Op
     Game Files
     """
     # Has dt been supplied?
-    if dt == None:
-        dt = 60/1000
+    if dt is None:
+        dt = 60 / 1000
 
     if keys[K_LEFT] or keys[K_a]:
         kLeft = 1
@@ -53,7 +53,7 @@ def keychecks(keys, actor: Actor, spd, dt: Optional[float] = None, blockJump: Op
     # else:
     #     kDown = 0
     if keys[K_SPACE] and not blockJump:
-        actor.jump(actor.m, actor.v)
+        actor.jump()
     if keys[K_q] and keys[K_LSHIFT] or keys[K_RSHIFT]:
         raise Exception("Keybind Interrupt")
     if keys[K_q]:
@@ -62,12 +62,12 @@ def keychecks(keys, actor: Actor, spd, dt: Optional[float] = None, blockJump: Op
     moveH = kRight - kLeft
     # moveV = kDown - kUp
 
-    Mag = sqrt((moveH * moveH))#+(moveV * moveV))
+    Mag = sqrt((moveH * moveH))# + (moveV * moveV))
 
     if Mag == 0:
         Mag = 1 * dt
     
-    moveX = (moveH/Mag) * spd
-    # moveY = (moveV/Mag) * spd
+    moveX = (moveH / Mag) * spd
+    # moveY = (moveV / Mag) * spd
 
     return moveX

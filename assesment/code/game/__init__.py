@@ -7,12 +7,10 @@ from .keys import keychecks
 from .actor import Actor
 from .background import bg, drawBackgrounds
 
-__all__ = list(
-    {
-        "Actor",
-        "bg",
-        "drawBackgrounds",
-        "keychecks",
-        "screen"
-    }
-)
+__all__ = [
+    "Actor",
+    "bg",
+    "drawBackgrounds",
+    "keychecks",
+    "screen"
+]
