@@ -33,7 +33,7 @@ import types
 import warnings
 from types import WrapperDescriptorType, MethodWrapperType, MethodDescriptorType, GenericAlias
 
-from _typing import (
+from game.__typing import (
     _idfunc,
     TypeVar,
     ParamSpec,

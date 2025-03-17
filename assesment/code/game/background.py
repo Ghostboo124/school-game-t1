@@ -14,41 +14,56 @@ except:
     except:
         print("Error has occured whilst importing typing_extensions!")
         print("Using internal typing, this may not be up to date, please fix your python.")
-        from ._typing import Optional
+        from .__typing import Optional
 class bg:
     def __init__(self, image: str, xchange: Optional[int] = None):
         """
         A Background class
         Args:
-            image: The image for the background, str
-            xchange: How much to change the x by every frame, int (Optional)
+            image: The path to the image for the background, str
+            xchange: How much to change the x by every frame, int (Optional) defaults to None
         """
         self.x = 0
         self.xChange = xchange
-        self.image = pygame.image.load(image)
-        self.image = pygame.transform.scale(self.image, (screen.get_width(), screen.get_height()))
-        self.imageFiller = self.image.copy()
-        self.imageFillerX = self.x + self.image.get_width()
+        self.image = self.__loadAndScale(image)
+        self.imageWidth = self.image.get_width()
+        self.imageFillerX = self.x + self.imageWidth
+    
+    def __loadAndScale(self, image_path: str) -> pygame.Surface:
+        """
+        A private function to load and scale an image
+        Args:
+            image_path: The path to the image, str
+        """
+        image = pygame.image.load(image_path)
+        return pygame.transform.scale(image, (screen.get_width(), screen.get_height()))
 
     def loadBackground(self, newImage: str) -> None:
-        self.image = pygame.image.load(newImage)
-        self.image = pygame.transform.scale(self.image, (screen.get_width(), screen.get_height()))
-        self.imageFiller = self.image.copy()
-        self.imageFillerX = self.x + self.image.get_width()
+        """
+        A Function to change the background image
+        Args:
+            newImage: The path to the new image, str
+        """
+        self.image = self.__loadAndScale(newImage)
+        self.imageWidth = self.image.get_width()
+        self.imageFillerX = self.x + self.imageWidth
 
 
     def drawBackground(self) -> None:
+        """
+        A Function to draw the background image
+        """
         if self.xChange is not None:
             self.x -= self.xChange
             self.imageFillerX -= self.xChange
 
-            if self.x <= -self.image.get_width():
-                self.x = self.image.get_width()
-            if self.imageFillerX <= -self.image.get_width():
-                self.imageFillerX = self.image.get_width()
+            if self.x <= -self.imageWidth:
+                self.x = self.imageWidth
+            if self.imageFillerX <= -self.imageWidth:
+                self.imageFillerX = self.imageWidth + self.x
         
         screen.blit(self.image, (self.x, 0))
-        screen.blit(self.imageFiller, (self.imageFillerX, 0))
+        screen.blit(self.image, (self.imageFillerX, 0))
 
 def drawBackgrounds(backgrounds: list[bg]):
     for i in backgrounds:
