@@ -31,4 +31,6 @@ A Game where you use either the arrow keys or the WASD keys to move a fox around
 You have to collect as many coins as possible within a 15 second timeframs
 
 ### Assement
+[![pypresence](https://img.shields.io/badge/using-pypresence-00bb88.svg?style=for-the-badge&logo=discord&logoWidth=20)](https://github.com/qwertyquerty/pypresence)
+
 My Digi Tech Assigment
