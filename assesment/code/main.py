@@ -18,7 +18,7 @@ try:
     import time
     import os
     import sys
-    from game import Actor, keychecks, drawBackgrounds, screen, musicManager
+    from game import Actor, keychecks, drawBackgrounds, screen, musicManager#, richPresence
     from game.background import backgrounds
     print('Trying to import typing')
     # Need to try typing then typing_extensions for backwards compatibility
@@ -40,6 +40,7 @@ except Exception as e:
 pygame.init()
 # Screen has been defined in the `game` module
 # musicManager has been defined in the `game` module
+# richPresence has been defined in the `game` module
 clock = pygame.time.Clock()
 running = True
 dt = 0
@@ -89,6 +90,7 @@ if __name__ == "__main__":
         tick = 0
         spNugget.iscolliding(numpy.array((0, 0)))
         musicManager.loadAndPlay(os.path.join("music", "chill4.ogg"), "Chill No.4", -1)
+        #richPresence.connect()
         # musicManager.loadAndPlay(os.path.join("music", "credence.ogg"), "Credence (For  the Uninitiated)", -1)
         while running:
             for event in pygame.event.get():
@@ -103,6 +105,7 @@ if __name__ == "__main__":
                 fps = 60
                 tick += 1
             pygame.display.flip()
+            # richPresence.update(pid=os.getpid(), activity_type=0, details="Alex's Assigment")
     except Exception as e:
         exit(-1, e)
     except KeyboardInterrupt:
