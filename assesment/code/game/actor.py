@@ -167,3 +167,15 @@ class Actor(pygame.sprite.Sprite):
                 self.y = 380
                 self.isJumping = False
             self.x += moveX
+
+class uiElement(Actor):
+    def __init__(self, image, name, disabled, pos = (0, 0), zoom = 1, rotation = 0):
+        super().__init__(image, name, disabled, pos, zoom, rotation)
+        print(self.image)
+
+    def draw(self) -> None:
+        """
+        Draws the UI Element to the screen unless disabled
+        """
+        if self.disabled == False:
+            screen.blit(self.imageBig, self.pos)

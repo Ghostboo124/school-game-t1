@@ -18,7 +18,7 @@ try:
     import time
     import os
     import sys
-    from game import Actor, keychecks, drawBackgrounds, screen, musicManager#, richPresence
+    from game import Actor, uiElement, keychecks, drawBackgrounds, screen, musicManager, bg#, richPresence
     from game.background import backgrounds
     print('Trying to import typing')
     # Need to try typing then typing_extensions for backwards compatibility
@@ -41,8 +41,16 @@ pygame.init()
 # Screen has been defined in the `game` module
 # musicManager has been defined in the `game` module
 # richPresence has been defined in the `game` module
+backgroundsPause = list[bg]()
+tint = list[bg]()
+for i in backgrounds:
+    backgroundsPause.append(bg(i.imagePath))
+    backgroundsPause[-1].x = i.x
+    backgroundsPause[-1].imageFillerX = i.imageFillerX
+tint.append(bg(os.path.join("images", "darkFilter.png")))
 clock = pygame.time.Clock()
 running = True
+paused = False
 dt = 0
 debug = 0
 
@@ -71,10 +79,19 @@ m = 1
 spNugget = Actor(os.path.join("images", "spNugget.png"), "spNugget", False, numpy.array((0, 380)), zoom, rot, m, v, spd)
 # spSkele = Actor(os.path.join("images", ""), "spSkele", False, numpy.array((screen.get_width() - 50, 380)), 2, 0, 1, 5, 1)
 
+spClose = uiElement(os.path.join("images", "closeUp.png"), "spClose", True, (50, 50),  4, 0)
+spPlay  = uiElement(os.path.join("images", "playUp.png"),  "spPlay",  True, (114, 50), 4, 0)
+
 def main(dt: float, fps: int) -> int:
     keys = pygame.key.get_pressed()
     moveX = keychecks(keys, spNugget, spd, dt, False)
     drawBackgrounds(backgrounds)
+    for background in backgrounds:
+        for pauseBackground in backgroundsPause:
+            if background.imagePath != pauseBackground.imagePath:
+                continue
+            pauseBackground.x = background.x
+            pauseBackground.imageFillerX = background.imageFillerX
 
     # spNugget.destroy()
     if spNugget.disabled == False:
@@ -89,23 +106,47 @@ if __name__ == "__main__":
     try:
         tick = 0
         spNugget.iscolliding(numpy.array((0, 0)))
-        musicManager.loadAndPlay(os.path.join("music", "chill4.ogg"), "Chill No.4", -1)
+        if "/nomusic" not in sys.argv:
+            musicManager.loadAndPlay(os.path.join("music", "chill4.ogg"), "Chill No.4", -1)
         #richPresence.connect()
         # musicManager.loadAndPlay(os.path.join("music", "credence.ogg"), "Credence (For  the Uninitiated)", -1)
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT: running = False
+                elif event.type == pygame.KEYDOWN: 
+                    if event.key == pygame.K_ESCAPE: 
+                        paused = not paused
+                        if paused == True:
+                            musicManager.pause()
+                        else:
+                            musicManager.play()
             screen.fill("black")
-            if tick != 0:
-                # print(f"FPS: {clock.get_fps()} DT: {dt} Raw Time: {clock.get_rawtime()} Time: {clock.get_time()}")
-                fps = main(dt, fps)
-                dt = clock.tick(fps) / 1000
+            # print(paused)
+            if paused == False:
+                if tick != 0:
+                    # print(f"FPS: {clock.get_fps()} DT: {dt} Raw Time: {clock.get_rawtime()} Time: {clock.get_time()}")
+                    fps = main(dt, fps)
+                    dt = clock.tick(fps) / 1000
+                else:
+                    dt = clock.tick(2) / 1000
+                    fps = 60
+                    tick += 1
+                pygame.display.flip()
+                # richPresence.update(pid=os.getpid(), activity_type=0, details="Alex's Assigment")
             else:
-                dt = clock.tick(2) / 1000
-                fps = 60
-                tick += 1
-            pygame.display.flip()
-            # richPresence.update(pid=os.getpid(), activity_type=0, details="Alex's Assigment")
+                # Things that were there before + tint
+                drawBackgrounds(backgroundsPause)
+                spNugget.draw()
+                drawBackgrounds(tint)
+
+                # Pause menu UI and extra scripts
+                keychecks(pygame.key.get_pressed(), spNugget, spd, dt, True)
+                spClose.disabled = False
+                spPlay.disabled = False
+                spClose.draw()
+                spPlay.draw()
+
+                pygame.display.flip()
     except Exception as e:
         exit(-1, e)
     except KeyboardInterrupt:

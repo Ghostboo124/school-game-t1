@@ -4,7 +4,7 @@ Pygame helper scripts
 
 from .g import screen, musicManager#, richPresence
 from .keys import keychecks
-from .actor import Actor
+from .actor import Actor, uiElement
 from .background import bg, drawBackgrounds
 
 __all__ = [

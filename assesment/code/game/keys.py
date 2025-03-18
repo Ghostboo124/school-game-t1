@@ -1,5 +1,5 @@
 from numpy import sqrt
-from pygame import K_LEFT, K_RIGHT, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT
+from pygame import K_LEFT, K_RIGHT, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT, K_ESCAPE
 from sys import exit, stderr
 
 try:
@@ -32,6 +32,7 @@ def keychecks(keys, actor: Actor, spd, dt: Optional[float] = None, blockJump: Op
     """
     Game Files
     """
+    global paused
     # Has dt been supplied?
     if dt is None:
         dt = 60 / 1000
@@ -62,7 +63,7 @@ def keychecks(keys, actor: Actor, spd, dt: Optional[float] = None, blockJump: Op
     moveH = kRight - kLeft
     # moveV = kDown - kUp
 
-    Mag = sqrt((moveH * moveH))# + (moveV * moveV))
+    Mag = sqrt((moveH * moveH))# + (moveV * moveV)
 
     if Mag == 0:
         Mag = 1 * dt

@@ -27,6 +27,7 @@ class bg:
         self.x = 0
         self.xChange = xchange
         self.image = self.__loadAndScale(image)
+        self.imagePath = image
         self.imageWidth = self.image.get_width()
         self.imageFillerX = self.x + self.imageWidth
     
