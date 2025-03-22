@@ -5,20 +5,24 @@ A Game by Alexander Perkins
 Error Codes:
     To check the error code, you can check the %errorlevel% variable in windows
     -1 Unknown error has occured, please refer to the error message
-    0  All is well, nothing has gone wrong
+    0  All is well, nothing has gonew wrong
     1  Import Error has occured
 """
 
 # Imports
+from game.actor import Actor, uiElement
+
+
 try:
     import pygame
     import random
-    import math
     import numpy
     import time
     import os
     import sys
-    from game import Actor, uiElement, keychecks, drawBackgrounds, screen, musicManager, bg#, richPresence
+    from game import Actor, uiElement, bg, map
+    from game import keychecks, drawBackgrounds, drawMap
+    from game import screen, musicManager, map1, map2, map3, map4
     from game.background import backgrounds
     print('Trying to import typing')
     # Need to try typing then typing_extensions for backwards compatibility
@@ -28,9 +32,14 @@ try:
     except ImportError:
         try:
             from typing_extensions import Optional
-            print('Typing failed, falling back to typing_extensions')
+            sys.stderr.write('Typing failed, falling back to typing_extensions')
+        except (ImportError, OSError):
+            sys.stderr.write("Importing custom typing, this doesn't get updated, please fix your python")
+            from game.__typing import Optional
         except Exception as e:
-            print(f'typing_extensions has failed to import, printing details now:\n\t{e}')
+            sys.stderr.write(f'typing_extensions has failed to import, printing details now:\n\t{e}')
+except ImportError as e:
+    print(f"Something has gone wrong while importing something, printing details now:\n\t{e.msg}")
 except Exception as e:
     # Can't use my exit function here, and I am not willing to place it earlier for organisational reasons
     print(f"Unknown error occured, printing details now:\n\t{e}")
@@ -41,6 +50,7 @@ pygame.init()
 # Screen has been defined in the `game` module
 # musicManager has been defined in the `game` module
 # richPresence has been defined in the `game` module
+# map has been defined in the `game` module
 backgroundsPause = list[bg]()
 tint = list[bg]()
 for i in backgrounds:
@@ -76,16 +86,17 @@ rot = 0
 zoom = 2.0
 v = 10
 m = 1
-spNugget = Actor(os.path.join("images", "spNugget.png"), "spNugget", False, numpy.array((0, 380)), zoom, rot, m, v, spd)
-# spSkele = Actor(os.path.join("images", ""), "spSkele", False, numpy.array((screen.get_width() - 50, 380)), 2, 0, 1, 5, 1)
+spNugget = Actor(image=os.path.join("images", "spNugget.png"), name="spNugget", disabled=False, pos=numpy.array(object=(0, 200), dtype=float), animation_path=os.path.join("images", "spNuggetIdle.gif"), zoom=zoom, rotation=rot, m=m, v=v, spd=spd) # type: ignore
+spSkele  = Actor(image=os.path.join("images", "spSkeleIdle.gif"), name="spSkele", disabled=False, pos=numpy.array(object=(380, 380), dtype=float), animation_path=os.path.join("images", "spSkeleIdle.gif"), zoom=4, rotation=0, m=1, v=5, spd=20) # type: ignore
 
-spClose = uiElement(os.path.join("images", "closeUp.png"), "spClose", True, (50, 50),  4, 0)
-spPlay  = uiElement(os.path.join("images", "playUp.png"),  "spPlay",  True, (114, 50), 4, 0)
+spClose = uiElement(image=os.path.join("images", "closeUp.png"), name="spClose", disabled=True, pos=(50, 50), zoom=4, rotation=0)
+spPlay  = uiElement(image=os.path.join("images", "playUp.png"),  name="spPlay",  disabled=True, pos=(114, 50), zoom=4, rotation=0)
 
 def main(dt: float, fps: int) -> int:
     keys = pygame.key.get_pressed()
-    moveX = keychecks(keys, spNugget, spd, dt, False)
+    moveX: float = keychecks(keys, spNugget, spd, dt, False)
     drawBackgrounds(backgrounds)
+    drawMap(map1)
     for background in backgrounds:
         for pauseBackground in backgroundsPause:
             if background.imagePath != pauseBackground.imagePath:
@@ -95,19 +106,28 @@ def main(dt: float, fps: int) -> int:
 
     # spNugget.destroy()
     if spNugget.disabled == False:
-        spNugget.applyGravity(moveX/2)
-        spNugget.update(spNugget.x + moveX, spNugget.y, "images\\spNugget.png", zoom=zoom)
+        spNugget.applyGravity(moveX=moveX/2, dt=dt)
+        spNugget.update(x=spNugget.x + moveX, y=spNugget.y, image="images\\spNugget.png", zoom=zoom, dt=dt)
         spNugget.draw()
         if debug:
             print(spNugget.pos)
+    
+    if spSkele.disabled == False:
+        if random.randint(0, 100) in range(0,90):
+            spSkele.moveTowards(target=spNugget, dt=dt)
+        else:
+            print("We caught an else!")
+        spSkele.applyGravity(moveX=0, dt=dt)
+        spSkele.update(x=spSkele.x, y=spSkele.y, dt=dt)
+        spSkele.draw()
     return fps
 
 if __name__ == "__main__":
     try:
         tick = 0
-        spNugget.iscolliding(numpy.array((0, 0)))
+        # spNugget.iscolliding(numpy.array((0, 0)))
         if "/nomusic" not in sys.argv:
-            musicManager.loadAndPlay(os.path.join("music", "chill4.ogg"), "Chill No.4", -1)
+            musicManager.loadAndPlay(music_file=os.path.join("music", "chill4.ogg"), namehint="Chill No.4", loops=-1)
         #richPresence.connect()
         # musicManager.loadAndPlay(os.path.join("music", "credence.ogg"), "Credence (For  the Uninitiated)", -1)
         while running:
@@ -125,8 +145,8 @@ if __name__ == "__main__":
             if paused == False:
                 if tick != 0:
                     # print(f"FPS: {clock.get_fps()} DT: {dt} Raw Time: {clock.get_rawtime()} Time: {clock.get_time()}")
-                    fps = main(dt, fps)
-                    dt = clock.tick(fps) / 1000
+                    fps: int = main(dt=dt, fps=fps)
+                    dt: float = clock.tick(fps) / 1000
                 else:
                     dt = clock.tick(2) / 1000
                     fps = 60
@@ -137,6 +157,7 @@ if __name__ == "__main__":
                 # Things that were there before + tint
                 drawBackgrounds(backgroundsPause)
                 spNugget.draw()
+                spSkele.draw()
                 drawBackgrounds(tint)
 
                 # Pause menu UI and extra scripts
@@ -147,11 +168,11 @@ if __name__ == "__main__":
                 spPlay.draw()
 
                 pygame.display.flip()
-    except Exception as e:
-        exit(-1, e)
+    # except Exception as e:
+    #     exit(errorlevel=-1, details=e)
     except KeyboardInterrupt:
         pygame.quit()
-        exit("Please don't keyboard interrupt, closing safely")
+        exit(details="Please don't keyboard interrupt, closing safely")
 
     pygame.quit()
     exit(errorlevel=0)

@@ -1,0 +1,78 @@
+{
+    "Map/SizeTest": {
+        "height": 4300,
+        "width": 2
+    },
+    "activeFile": "maps/map1.tmx",
+    "expandedProjectPaths": [
+        ".",
+        "maps"
+    ],
+    "file.lastUsedOpenFilter": "All Files (*)",
+    "fileStates": {
+        "Mossy Tileset.tsx": {
+            "scaleInDock": 1.4,
+            "scaleInEditor": 4
+        },
+        "map.tmx": {
+            "scale": 0.3308,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": -3810.459492140267,
+                "y": 181.37847642079805
+            }
+        },
+        "map1.tmx": {
+            "scale": 0.75,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 532.6666666666665,
+                "y": 300
+            }
+        },
+        "maps/map1.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 663,
+                "y": 352
+            }
+        },
+        "maps/map2.tmx": {
+            "scale": 2,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 640,
+                "y": 352
+            }
+        }
+    },
+    "last.imagePath": "C:/Users/perkinsal/gh/school-game-t1/itch.io-free-assets/Mossy Assets/Mossy Tileset",
+    "last.worldFilePath": "C:/Users/perkinsal/gh/school-game-t1/assesment/code/tiledProjects/assesmentMap/maps",
+    "loadedWorlds": [
+        "C:/Users/perkinsal/gh/school-game-t1/assesment/code/tiledProjects/assesmentMap/maps/maps.world",
+        "C:/Users/perkinsal/gh/school-game-t1/assesment/code/tiledProjects/assesmentMap/maps/maps.world"
+    ],
+    "map.fixedSize": true,
+    "map.height": 22,
+    "map.lastUsedFormat": "tmx",
+    "map.width": 40,
+    "openFiles": [
+        "Mossy Tileset.tsx",
+        "maps/map1.tmx",
+        "maps/map2.tmx"
+    ],
+    "project": "map.tiled-project",
+    "recentFiles": [
+        "Mossy Tileset.tsx",
+        "maps/map2.tmx",
+        "maps/map1.tmx",
+        "map1.tmx",
+        "map.tmx"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 32,
+        "width": 32
+    }
+}

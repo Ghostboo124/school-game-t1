@@ -3,6 +3,9 @@ The file to deal with backgrounds
 """
 import pygame
 from os.path import join as joinPath
+from numpy import ndarray
+from pytmx import TiledMap, TiledTileLayer
+import pytmx
 from .g import screen
 
 try:
@@ -25,11 +28,11 @@ class bg:
             xchange: How much to change the x by every frame, int (Optional) defaults to None
         """
         self.x = 0
-        self.xChange = xchange
-        self.image = self.__loadAndScale(image)
-        self.imagePath = image
-        self.imageWidth = self.image.get_width()
-        self.imageFillerX = self.x + self.imageWidth
+        self.xChange: int | None = xchange
+        self.image: pygame.Surface = self.__loadAndScale(image_path=image)
+        self.imagePath: str = image
+        self.imageWidth: int = self.image.get_width()
+        self.imageFillerX: int = self.x + self.imageWidth
     
     def __loadAndScale(self, image_path: str) -> pygame.Surface:
         """
@@ -37,7 +40,7 @@ class bg:
         Args:
             image_path: The path to the image, str
         """
-        image = pygame.image.load(image_path)
+        image: pygame.Surface = pygame.image.load(image_path)
         return pygame.transform.scale(image, (screen.get_width(), screen.get_height()))
 
     def loadBackground(self, newImage: str) -> None:
@@ -46,7 +49,7 @@ class bg:
         Args:
             newImage: The path to the new image, str
         """
-        self.image = self.__loadAndScale(newImage)
+        self.image = self.__loadAndScale(image_path=newImage)
         self.imageWidth = self.image.get_width()
         self.imageFillerX = self.x + self.imageWidth
 
@@ -60,19 +63,31 @@ class bg:
             self.imageFillerX -= self.xChange
 
             if self.x <= -self.imageWidth:
-                self.x = self.imageWidth
+                self.x: int = self.imageWidth
             if self.imageFillerX <= -self.imageWidth:
                 self.imageFillerX = self.imageWidth + self.x
         
-        screen.blit(self.image, (self.x, 0))
-        screen.blit(self.image, (self.imageFillerX, 0))
+        screen.blit(source=self.image, dest=(self.x, 0))
+        screen.blit(source=self.image, dest=(self.imageFillerX, 0))
 
 def drawBackgrounds(backgrounds: list[bg]):
     for i in backgrounds:
         i.drawBackground()
 
-backgrounds = [
-    bg(joinPath("images", "bg1.png"), 1),
-    bg(joinPath("images", "bg2.png"), 2),
-    bg(joinPath("images", "bg3.png"), 2.5)
+def drawMap(map: TiledMap):
+    for layer in map.layers:
+        # print(layer)
+        # print(map.objects) # type: ignore
+        # print(map.layers)
+        # for x, y, gid in map.layers[layer].iter_data():
+        for x, y, gid in layer.iter_data():
+            try:
+                screen.blit(map.get_tile_image_by_gid(gid), (x*32, y*32)) # type: ignore
+            except Exception as e:
+                continue
+
+backgrounds: list[bg] = [
+    bg(image=joinPath("images", "bg1.png"), xchange=1),
+    bg(image=joinPath("images", "bg2.png"), xchange=2),
+    bg(image=joinPath("images", "bg3.png"), xchange=4)
 ]

@@ -1,11 +1,18 @@
 from numpy import sqrt
 from pygame import K_LEFT, K_RIGHT, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT, K_ESCAPE
-from sys import exit, stderr
+from sys import stderr
+from sys import exit as __exit
 
 try:
     from typing import Optional, TYPE_CHECKING
 except (ImportError, OSError):
-    from typing_extensions import Optional
+    try:
+        print("Error whilst importing typing!\nFalling back to typing_extensions")
+        from typing_extensions import Optional, TYPE_CHECKING
+    except ImportError:
+        print("Error has occured whilst importing typing_extensions!")
+        print("Using internal typing, this may not be up to date, please fix your python.")
+        from .__typing import Optional, TYPE_CHECKING
 
 if TYPE_CHECKING:
     from .actor import Actor
@@ -26,7 +33,7 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int
             stderr.write(f"Type: {type(details)}, Details:\n\t{details}")
         else:
             stderr.write(f"Details:\n\t{details}")
-    exit(errorlevel)
+    __exit(errorlevel)
 
 def keychecks(keys, actor: Actor, spd, dt: Optional[float] = None, blockJump: Optional[bool] = False) -> float:
     """

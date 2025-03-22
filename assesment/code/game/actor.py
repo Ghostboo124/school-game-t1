@@ -2,16 +2,73 @@
 The Actor file
 """
 
+from PIL.ImageFile import ImageFile
+from numpy._typing._array_like import NDArray
 import pygame, numpy
-from sys import exit, stderr
-from .g import screen
+from PIL import Image
+from sys import stderr
+from sys import exit as __exit
+from .g import screen, map
 from .keys import keychecks
 from .background import drawBackgrounds, backgrounds
 
 try:
-    from typing import Optional
+    from typing import Optional, TYPE_CHECKING
 except (ImportError, OSError):
-    from typing_extensions import Optional
+    try:
+        print("Error whilst importing typing!\nFalling back to typing_extensions")
+        from typing_extensions import Optional, TYPE_CHECKING
+    except ImportError:
+        print("Error has occured whilst importing typing_extensions!")
+        print("Using internal typing, this may not be up to date, please fix your python.")
+        from .__typing import Optional, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .actor import Actor
+else:
+    class Actor: pass
+
+def loadGifFrames(path: str) -> list[pygame.Surface]:
+    if not isinstance(path, str):
+        raise ValueError(f"Path ({path}) should be a string representing the file path, not {type(path)}")
+    
+    image: ImageFile = Image.open(fp=path)
+    frames: list[pygame.Surface] = []
+    try:
+        while True:
+            frame: Image.Image = image.copy()
+            frame = frame.convert(mode="RGBA")
+            frames.append(pygame.image.fromstring(frame.tobytes(), frame.size, frame.mode)) # type: ignore < for pylance
+            image.seek(frame=image.tell() + 1)
+    except EOFError:
+        pass
+    return frames
+
+def raycast(start: numpy.ndarray, end: numpy.ndarray, obstacles: list) -> bool:
+    """
+    Perform raycasting to check for line of sight between start and end positions.
+
+    Args:
+        start (numpy.ndarray): The starting position of the ray.
+        end (numpy.ndarray): The ending position of the ray.
+        obstacles (list): A list of obstacle rects.
+
+    Returns:
+        bool: True if there is a clear line of sight, False otherwise.
+    """#TODO: UPDATE PROPERLY
+    if obstacles == None:
+        return True
+    direction = end - start
+    distance= numpy.linalg.norm(x=direction)
+    direction = direction / distance  # Normalize the direction vector
+
+    steps = int(distance)
+    for i in range(steps):
+        point = start + direction * i
+        for obstacle in obstacles:
+            if obstacle.collidepoint(point):
+                return False
+    return True
 
 def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int:
     """
@@ -27,10 +84,26 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int
             stderr.write(f"Type: {type(details)}, Details:\n\t{details}")
         else:
             stderr.write(f"Details:\n\t{details}")
-    exit(errorlevel)
+    __exit(errorlevel)
+
+class Animation:
+    def __init__(self, frames, frame_duration) -> None:
+        self.frames = frames
+        self.frame_duration = frame_duration
+        self.current_frame = 0
+        self.time_accumulator = 0
+
+    def update(self, dt) -> None:
+        self.time_accumulator += dt
+        if self.time_accumulator >= self.frame_duration:
+            self.time_accumulator -= self.frame_duration
+            self.current_frame = (self.current_frame + 1) % len(self.frames)
+
+    def get_current_frame(self):
+        return self.frames[self.current_frame]
 
 class Actor(pygame.sprite.Sprite):
-    def __init__(self, image: str, name: str, disabled: bool, pos: Optional[tuple[int, int]] | Optional[numpy.ndarray] = (0, 0), zoom: Optional[float] = 1.0, rotation: Optional[float] = 0.0, m: int = 1, v: int = 5, spd: int = 1):
+    def __init__(self: Actor, image: str, name: str, disabled: bool, pos: Optional[numpy.ndarray[float, float]] = numpy.array(object=(0, 0), dtype=float), animation_path: Optional[str] = None, zoom: float = 1.0, rotation: float = 0.0, m: int = 1, v: int = 5, spd: int = 1): # type: ignore
         """
         An Actor class so that this code is nicely wrapped up instead of having multiple instances
         Args:
@@ -43,28 +116,38 @@ class Actor(pygame.sprite.Sprite):
             m: Mass, defaults to 1, int
             v: Velocity, defaults to 5, int
             spd: The speed of the Actor, defaults to 1, int
-        """
+        """# TODO: UPDATE THIS!
         super().__init__()
         try:
-            self.image = pygame.image.load(image).convert()
+            if image.split(sep=".")[1] == "gif":
+                self.image: pygame.Surface = pygame.image.load(image).convert_alpha()
+                self.image.set_colorkey(pygame.Color((0, 0, 0)))
+            else:
+                # print(image.split("."))
+                self.image = pygame.image.load(image).convert_alpha()
         except Exception as e:
-            exit(2, e)
-        self.imageBig = pygame.transform.rotozoom(self.image, rotation, zoom)
-        self.name = name
-        if not isinstance(pos, numpy.ndarray):
-            pos = numpy.array(pos)
-        self.pos = pos
-        self.x = self.pos[0]
-        self.y = self.pos[1]
-        self.disabled = disabled
-        self.m = m
-        self.v = v
-        self.spd = spd
-        self.isJumping = False
-        self.jumpVelocity = 0
-        self.gravity = 1
+            exit(errorlevel=2, details=e)
+        self.imageBig: pygame.Surface = pygame.transform.rotozoom(self.image, rotation, zoom)
+        self.name: str = name  
+        self.pos: numpy.ndarray[float, float] = pos # type: ignore
+        self.x: float = self.pos[0]
+        self.y: float = self.pos[1]
+        self.disabled: bool = disabled
+        self.m: int = m
+        self.staticM: int = self.m
+        self.v: int = v
+        self.staticV: int = self.v
+        self.spd: int = spd
+        self.isJumping: bool = False
+        self.jumpVelocity: int = 0
+        self.gravity: int = 1
+        self.animation: Animation
+        # print(f"Image: {image} name: {name} disabled: {disabled} pos: {pos} animation_path: {animation_path} zoom: {zoom} rotation: {rotation} m: {m} v: {v} spd: {spd}")
+        if None != animation_path:
+            frames: list[Surface] = loadGifFrames(path=animation_path) # type: ignore
+            self.animation = Animation(frames=frames, frame_duration=100)
     
-    def draw(self):
+    def draw(self: Actor) -> None:
         """
         A Function to draw the actor to the screen, doesn't take any arguments
         """
@@ -85,10 +168,10 @@ class Actor(pygame.sprite.Sprite):
                 self.destroy()
 
             # Updating the position if it gets changed and putting the image onto the screen
-            self.pos = (self.x, self.y)
-            screen.blit(self.imageBig, self.pos)
+            self.pos = numpy.array(object=(self.x, self.y), dtype=float) # type: ignore
+            screen.blit(source=self.imageBig, dest=tuple(self.pos))
     
-    def update(self, x: int, y: int, image: Optional[str] = None, zoom: float = 1.0, rotation: float = 0.0):
+    def update(self: Actor, x: float, y: float, image: Optional[str] = None, zoom: float = 1.0, rotation: float = 0.0, dt: float = 60/1000):
         """
         A Function to update the Actor
         Args:
@@ -97,59 +180,66 @@ class Actor(pygame.sprite.Sprite):
             image: The image path, Optional, defaults to None
             zoom: The zoom value as a float, defaults to 1.0
             rotation: The rotation, defaults to 0.0
-        """
+        """#TODO: UPDATE THIS DOCSTRING
         if self.disabled == False:
             #print(f"Updating Actor: {self.name}")
+            if self.animation != None:
+                self.animation.update(dt=dt)
             if image is not None:
-                self.image = pygame.image.load(image).convert()
+                self.image = pygame.image.load(image).convert_alpha()
                 self.imageBig = pygame.transform.rotozoom(self.image, rotation, zoom)
-            self.pos = numpy.array((x, y))
+            self.pos = numpy.array(object=(x, y), dtype=float) # type: ignore
             self.x = self.pos[0]
             self.y = self.pos[1]
 
-    def destroy(self):
-        self.disabled = True
-        self.image = ""
-        self.x, self.y = numpy.array((60054854, 756483))
-        self.pos = (self.x, self.y)
+    def moveTowards(self: Actor, target: Actor | numpy.ndarray[float, float], dt: float) -> None: # type: ignore
+        if isinstance(target, Actor):
+            targetPos: numpy.ndarray= target.pos
+        elif isinstance(target, numpy.ndarray) or isinstance(target, dict):
+            targetPos: numpy.ndarray = target
+        # print(raycast(self.pos, targetPos, None))
+
+        x: float = targetPos[0] - self.x
+        y: float = targetPos[1] - self.y
+        direction: numpy.ndarray = numpy.array(object=(x, y))
+        distance: numpy.floating = numpy.linalg.norm(direction)
+        
+        if distance > 0:
+            direction = direction / distance # Normalise the vector
+            if direction[1] <= -1 or direction[1] >= 0:
+                # print(direction[1])
+                return
+            self.pos += direction * self.spd * dt # type: ignore
+            self.x, self.y = self.pos
+            # print(f"New Pos: {self.pos}")
+        else:
+            if isinstance(target, Actor):
+                self.attack(target=target)
+            else:
+                print("Can't attack, target is not an Actor")
     
-    def iscolliding(self, object: numpy.ndarray | tuple):
+    def attack(self: Actor, target: Actor):
+        print("No!")
+
+    def destroy(self: Actor) -> None:
+        self.disabled = True
+        self.x, self.y = numpy.array(object=(60054854, 756483))
+        self.pos = numpy.array(object=(self.x, self.y)) # type: ignore
+        self.image = "" # type: ignore 
+    def iscolliding(self, object: numpy.ndarray | tuple | Actor) -> None:
         # print(self.pos)
         if isinstance(object, (numpy.ndarray, tuple)) and len(object) == 2:
-            print(f"({object[0], object[1]})")
+            # print(f"({object[0], object[1]})")
+            pass
         elif not isinstance(object, numpy.ndarray):
-            print(f"Weird, the type of the object is {type(object)}")
+            # print(f"Weird, the type of the object is {type(object)}")
+            pass
         elif len(object) != 2:
-            print(f"Weird, the length is wrong: {len(object)}")
-        return NotImplemented
-    # def jump(self, m: int, v: int):
-    #     """
-    #     A Function to make an actor jump
-    #     Args:
-    #         m: The objects mass
-    #         v: the objects velocity
-    #     """
-    #     isJump = True
-    #     if self.y == 380:
-    #         while isJump:
-    #             screen.fill(pygame.Color(0, 0, 0))
-    #             F = (1 / 2) * m * (v ** 2)
-    #             self.y -= F
-    #             v -= 1
-    #             if v < 0:
-    #                 m = -1
-    #             if v == -6:
-    #                 v = 5
-    #                 m = 1
-    #                 isJump = False
-    #             keys = pygame.key.get_pressed()
-    #             moveX = keychecks(keys, self, self.spd, blockJump=True)
-    #             drawBackgrounds(backgrounds)
-    #             self.update(self.x + moveX, self.y, zoom=2)
-    #             self.draw()
-    #             pygame.display.flip()
-    #             pygame.time.delay(40)
-    def jump(self):
+            # print(f"Weird, the length is wrong: {len(object)}")
+            pass
+        raise NotImplementedError("This isn't implimented yet")
+    
+    def jump(self) -> None:
         """
         A Function to make an actor jump
         Args:
@@ -159,7 +249,7 @@ class Actor(pygame.sprite.Sprite):
             self.isJumping = True
             self.jumpVelocity = self.v
 
-    def applyGravity(self, moveX: float):
+    def applyGravity(self, moveX: float, dt: float) -> None:
         if self.isJumping == True:
             self.y -= self.jumpVelocity
             self.jumpVelocity -= self.gravity
@@ -167,15 +257,18 @@ class Actor(pygame.sprite.Sprite):
                 self.y = 380
                 self.isJumping = False
             self.x += moveX
+        if self.y < 380 and self.isJumping == False:
+            self.y -= self.jumpVelocity
+            self.jumpVelocity -= self.gravity
 
 class uiElement(Actor):
     def __init__(self, image, name, disabled, pos = (0, 0), zoom = 1, rotation = 0):
-        super().__init__(image, name, disabled, pos, zoom, rotation)
-        print(self.image)
+        super().__init__(image=image, name=name, disabled=disabled, pos=pos, animation_path=None, zoom=zoom, rotation=rotation)
+        # print(self.image)
 
     def draw(self) -> None:
         """
         Draws the UI Element to the screen unless disabled
         """
         if self.disabled == False:
-            screen.blit(self.imageBig, self.pos)
+            screen.blit(source=self.imageBig, dest=tuple(self.pos))

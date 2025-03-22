@@ -2,15 +2,17 @@
 Pygame helper scripts
 """
 
-from .g import screen, musicManager#, richPresence
+from .g import screen, musicManager, map#, richPresence
 from .keys import keychecks
 from .actor import Actor, uiElement
-from .background import bg, drawBackgrounds
+from .background import bg, drawBackgrounds, drawMap
+from .map import map1, map2, map3, map4, mapElement
 
-__all__ = [
+__all__: list[str] = [
     "Actor",
     "bg",
     "drawBackgrounds",
+    "drawMap",
     "keychecks",
     "screen"
 ]
