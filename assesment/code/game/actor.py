@@ -6,9 +6,11 @@ from PIL.ImageFile import ImageFile
 from numpy._typing._array_like import NDArray
 import pygame, numpy
 from PIL import Image
+from pytmx import TiledMap
 from sys import stderr
 from sys import exit as __exit
-from .g import screen, map
+from .g import screen, gameMap
+from .map import map1, map2, map3, map4
 from .keys import keychecks
 from .background import drawBackgrounds, backgrounds
 
@@ -155,18 +157,17 @@ class Actor(pygame.sprite.Sprite):
         if self.disabled == False:
             if self.x < 0:
                 #self.x = 0
-                self.x = screen.get_width() - self.image.get_width() - 30
+                self.x = screen.get_width() - self.imageBig.get_width()
             elif self.x > screen.get_width() - self.imageBig.get_width():
                 #self.x = screen.get_width() - self.image.get_width() - 40 ### Commented lines are the original lines that make sure that the 
                 self.x = 0                                                 ### character doesn't go off the screen, this has been replaced by
                                                                            ### the character moving to the other side of the screen
             if self.y < 0:
                 #self.y = 0
-                self.destroy()
-            elif self.y > screen.get_height() - self.imageBig.get_height() - 40: ### These haven't been replaced by the character getting destroyed
+                self.y = screen.get_height() - self.imageBig.get_height() - 40
+            elif self.y > screen.get_height() - self.imageBig.get_height() - 40:
                 #self.y = screen.get_height() - self.image.get_height() - 40
-                self.destroy()
-
+                self.y = 0
             # Updating the position if it gets changed and putting the image onto the screen
             self.pos = numpy.array(object=(self.x, self.y), dtype=float) # type: ignore
             screen.blit(source=self.imageBig, dest=tuple(self.pos))
@@ -226,18 +227,57 @@ class Actor(pygame.sprite.Sprite):
         self.x, self.y = numpy.array(object=(60054854, 756483))
         self.pos = numpy.array(object=(self.x, self.y)) # type: ignore
         self.image = "" # type: ignore 
-    def iscolliding(self, object: numpy.ndarray | tuple | Actor) -> None:
-        # print(self.pos)
-        if isinstance(object, (numpy.ndarray, tuple)) and len(object) == 2:
-            # print(f"({object[0], object[1]})")
-            pass
-        elif not isinstance(object, numpy.ndarray):
-            # print(f"Weird, the type of the object is {type(object)}")
-            pass
-        elif len(object) != 2:
-            # print(f"Weird, the length is wrong: {len(object)}")
-            pass
-        raise NotImplementedError("This isn't implimented yet")
+        
+    def isColliding(self, object: numpy.ndarray | Actor | TiledMap | str) -> bool:
+        """
+        Check if the actor is colliding with a solid tile in the map.
+        Args:
+            object: The object to check collision with, can be an array, an Actor or a map
+        """
+        actorRect: pygame.Rect = self.imageBig.get_rect(topleft=(self.x, self.y))
+
+        if isinstance(object, str):
+            if object not in gameMap.maps or object != gameMap.currentMap:
+                return False
+            else:
+                if object == "map1":
+                    object = map1
+                elif object == "map2":
+                    object = map2
+                elif object == "map3":
+                    object = map3
+                elif object == "map3":
+                    object = map4
+
+        if isinstance(object, TiledMap):
+            for layer in object.visible_layers:
+                if hasattr(layer, 'data'):
+                    tileWidth: int = object.tilewidth
+                    tileHeight: int = object.tileheight
+                    mapWidth: int = object.width
+                    mapHeight: int = object.height
+                    
+                    startX = int(self.x // tileWidth)
+                    startY = int(self.y // tileHeight)
+                    endX: int = startX + 2
+                    endY: int = startY + 2
+
+                    for tileX in range(max(0, startX), min(endX, mapWidth)):
+                        for tileY in range(max(0, startY), min(endY, mapHeight)):
+                            tileIndex: int = tileY * mapWidth + tileX
+                            if tileIndex < len(layer.data) and layer.data[tileIndex] != 0:
+                                tileRect = pygame.Rect(tileX * tileWidth, tileY * tileHeight, tileWidth, tileHeight)
+                                if actorRect.colliderect(tileRect):
+                                    return True
+        
+        elif isinstance(object, Actor):
+            target_rect: pygame.Rect = object.imageBig.get_rect(topleft=(object.x, object.y))
+            return actorRect.colliderect(target_rect)
+        
+        elif isinstance(object, numpy.ndarray):
+            return actorRect.collidepoint(object[0], object[1])
+        
+        return True
     
     def jump(self) -> None:
         """

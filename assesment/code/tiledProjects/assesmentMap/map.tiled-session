@@ -3,16 +3,23 @@
         "height": 4300,
         "width": 2
     },
-    "activeFile": "maps/map1.tmx",
+    "activeFile": "maps/map4.tmx",
     "expandedProjectPaths": [
-        ".",
-        "maps"
+        "maps",
+        "."
     ],
+    "exportAsImage.drawTileGrid": true,
     "file.lastUsedOpenFilter": "All Files (*)",
     "fileStates": {
         "Mossy Tileset.tsx": {
+            "dynamicWrapping": false,
             "scaleInDock": 1.4,
             "scaleInEditor": 4
+        },
+        "Test.tsx": {
+            "dynamicWrapping": true,
+            "scaleInDock": 1,
+            "scaleInEditor": 1
         },
         "map.tmx": {
             "scale": 0.3308,
@@ -30,27 +37,50 @@
                 "y": 300
             }
         },
-        "maps/map1.tmx": {
-            "scale": 1,
+        "maps/endMap.tmx": {
+            "scale": 0.7933984375,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 663,
-                "y": 352
+                "x": 319.511594702378,
+                "y": 380.01083156910045
             }
         },
-        "maps/map2.tmx": {
+        "maps/map1.tmx": {
             "scale": 2,
             "selectedLayer": 0,
             "viewCenter": {
-                "x": 640,
-                "y": 352
+                "x": 1223.25,
+                "y": 69.75
+            }
+        },
+        "maps/map2.tmx": {
+            "scale": 0.5,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 755,
+                "y": 253
+            }
+        },
+        "maps/map3.tmx": {
+            "scale": 1,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1630.5,
+                "y": 170.5
+            }
+        },
+        "maps/map4.tmx": {
+            "scale": 0.7933984375,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 1780.3160848801142,
+                "y": 596.7997636748561
             }
         }
     },
     "last.imagePath": "C:/Users/perkinsal/gh/school-game-t1/itch.io-free-assets/Mossy Assets/Mossy Tileset",
     "last.worldFilePath": "C:/Users/perkinsal/gh/school-game-t1/assesment/code/tiledProjects/assesmentMap/maps",
     "loadedWorlds": [
-        "C:/Users/perkinsal/gh/school-game-t1/assesment/code/tiledProjects/assesmentMap/maps/maps.world",
         "C:/Users/perkinsal/gh/school-game-t1/assesment/code/tiledProjects/assesmentMap/maps/maps.world"
     ],
     "map.fixedSize": true,
@@ -60,13 +90,20 @@
     "openFiles": [
         "Mossy Tileset.tsx",
         "maps/map1.tmx",
-        "maps/map2.tmx"
+        "maps/map2.tmx",
+        "maps/map3.tmx",
+        "maps/map4.tmx",
+        "maps/endMap.tmx"
     ],
     "project": "map.tiled-project",
     "recentFiles": [
         "Mossy Tileset.tsx",
-        "maps/map2.tmx",
         "maps/map1.tmx",
+        "maps/map2.tmx",
+        "maps/map3.tmx",
+        "maps/endMap.tmx",
+        "maps/map4.tmx",
+        "Test.tsx",
         "map1.tmx",
         "map.tmx"
     ],
@@ -74,5 +111,6 @@
     "tileset.tileSize": {
         "height": 32,
         "width": 32
-    }
+    },
+    "tileset.type": 1
 }

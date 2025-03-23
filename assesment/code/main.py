@@ -10,6 +10,7 @@ Error Codes:
 """
 
 # Imports
+from pygame.key import ScancodeWrapper
 from game.actor import Actor, uiElement
 
 
@@ -20,7 +21,7 @@ try:
     import time
     import os
     import sys
-    from game import Actor, uiElement, bg, map
+    from game import Actor, uiElement, bg, gameMap
     from game import keychecks, drawBackgrounds, drawMap
     from game import screen, musicManager, map1, map2, map3, map4
     from game.background import backgrounds
@@ -89,11 +90,14 @@ m = 1
 spNugget = Actor(image=os.path.join("images", "spNugget.png"), name="spNugget", disabled=False, pos=numpy.array(object=(0, 200), dtype=float), animation_path=os.path.join("images", "spNuggetIdle.gif"), zoom=zoom, rotation=rot, m=m, v=v, spd=spd) # type: ignore
 spSkele  = Actor(image=os.path.join("images", "spSkeleIdle.gif"), name="spSkele", disabled=False, pos=numpy.array(object=(380, 380), dtype=float), animation_path=os.path.join("images", "spSkeleIdle.gif"), zoom=4, rotation=0, m=1, v=5, spd=20) # type: ignore
 
+gameMap.alignToFloor(actor=spNugget)
+gameMap.alignToFloor(actor=spSkele)
+
 spClose = uiElement(image=os.path.join("images", "closeUp.png"), name="spClose", disabled=True, pos=(50, 50), zoom=4, rotation=0)
 spPlay  = uiElement(image=os.path.join("images", "playUp.png"),  name="spPlay",  disabled=True, pos=(114, 50), zoom=4, rotation=0)
 
 def main(dt: float, fps: int) -> int:
-    keys = pygame.key.get_pressed()
+    keys: ScancodeWrapper = pygame.key.get_pressed()
     moveX: float = keychecks(keys, spNugget, spd, dt, False)
     drawBackgrounds(backgrounds)
     drawMap(map1)
@@ -106,19 +110,38 @@ def main(dt: float, fps: int) -> int:
 
     # spNugget.destroy()
     if spNugget.disabled == False:
-        spNugget.applyGravity(moveX=moveX/2, dt=dt)
-        spNugget.update(x=spNugget.x + moveX, y=spNugget.y, image="images\\spNugget.png", zoom=zoom, dt=dt)
+        newX: float = spNugget.x + moveX
+        newY: float = spNugget.y
+
+        tempActor: Actor = spNugget
+        tempActor.x = newX
+        tempActor.y = newY
+
+        if not tempActor.isColliding(gameMap.currentMap) or not tempActor.isColliding(spSkele):
+            gameMap.alignToFloor(actor=spNugget)
+            spNugget.update(x=newX, y=newY, image="images\\spNugget.png", zoom=zoom, dt=dt)
+        else:
+            print("spNugget colliding with map or spSkele!")
+            spNugget.x = spNugget.x
+            spNugget.y = spNugget.y
+    
         spNugget.draw()
+
         if debug:
             print(spNugget.pos)
     
     if spSkele.disabled == False:
-        if random.randint(0, 100) in range(0,90):
-            spSkele.moveTowards(target=spNugget, dt=dt)
+        gameMap.alignToFloor(actor=spSkele)
+        if not spSkele.isColliding(spNugget):
+            if not spSkele.isColliding(gameMap.currentMap):
+                if random.randint(0, 100) in range(0,90):
+                    spSkele.moveTowards(target=spNugget, dt=dt)
+                # spSkele.applyGravity(moveX=0, dt=dt)
+                spSkele.update(x=spSkele.x, y=spSkele.y, dt=dt)
+            else:
+                print("spSkele with map")
         else:
-            print("We caught an else!")
-        spSkele.applyGravity(moveX=0, dt=dt)
-        spSkele.update(x=spSkele.x, y=spSkele.y, dt=dt)
+            print("Colliding with spNugget")
         spSkele.draw()
     return fps
 

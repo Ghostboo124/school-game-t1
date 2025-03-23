@@ -2,7 +2,7 @@
 Pygame helper scripts
 """
 
-from .g import screen, musicManager, map#, richPresence
+from .g import screen, musicManager, gameMap#, richPresence
 from .keys import keychecks
 from .actor import Actor, uiElement
 from .background import bg, drawBackgrounds, drawMap

@@ -9,17 +9,33 @@ from pytmx.pytmx import TiledMap
 
 pygame.display.init()
 pygame.display.set_mode((1, 1))
+map1: TiledMap = load_pygame(filename=os.path.join("images", "maps", "map1.tmx"))
+print(map1)
+
+map2: TiledMap = load_pygame(filename=os.path.join("images", "maps", "map2.tmx"))
+print(map2)
+
+map3: TiledMap = load_pygame(filename=os.path.join("images", "maps", "map3.tmx"))
+print(map3)
+
+map4: TiledMap = load_pygame(filename=os.path.join("images", "maps", "map4.tmx"))
+print(map4)
 
 try:
-    from typing import Optional, Any
+    from typing import Optional, Any, TYPE_CHECKING
 except ImportError:
     try:
         print("Error whilst importing typing!\nFalling back to typing_extensions")
-        from typing_extensions import Optional, Any
+        from typing_extensions import Optional, Any, TYPE_CHECKING
     except ImportError:
         print("Error has occured whilst importing typing_extensions!")
         print("Using internal typing, this may not be up to date, please fix your python.")
-        from .__typing import Optional, Any
+        from .__typing import Optional, Any, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from .actor import Actor
+else:
+    class Actor: pass
 
 class map:
     def __init__(self):
@@ -64,8 +80,45 @@ class map:
             else:
                 self.currentMap = map
         return self.currentMap
+    def placeCharacter(self, actor: Actor, pos: ndarray[float, float]) -> None: # type: ignore
+        actor.x, actor.y = pos # TODO: FIX THIS
+        self.alignToFloor(actor)
+    
+    def getGroundLevel(self, map: TiledMap, x: float) -> int:
+        """
+        Determine the ground level at a given point on a map
+        Args:
+            map: The map to use, is a TiledMap
+            x: the x value to look for the ground point at, float
+        """
 
-def loadGifFrames(path: str) -> list[pygame.Surface]:
+        TiledMap.visible_layers
+
+        for layer in map.visible_layers:
+            if hasattr(layer, "data"):
+                tileX = int(x // map.tilewidth)
+                if 0 <= tileX < map.width:
+                    for tileY in range(map.height):
+                        tileIndex = tileY * map.width + tileX
+                        if layer.data[tileIndex] != 0:
+                            return tileY * map.tileheight
+        return map.height // 2
+
+    def alignToFloor(self, actor: Actor) -> None:
+        if self.currentMap == "map1":
+            groundLevel = self.getGroundLevel(map1, actor.x)
+        elif self.currentMap == "map2":
+            groundLevel = self.getGroundLevel(map2, actor.x)
+        elif self.currentMap == "map3":
+            groundLevel = self.getGroundLevel(map3, actor.x)
+        elif self.currentMap == "map4":
+            groundLevel = self.getGroundLevel(map4, actor.x)
+        else:
+            groundLevel = 380
+        
+        actor.y = groundLevel - actor.imageBig.get_height()
+
+def loadGifFrames(path: str) -> list[pygame.Surface]:       
     if not isinstance(path, str):
         raise ValueError(f"Path ({path}) should be a string representing the file path, not {type(path)}")
     
@@ -95,15 +148,5 @@ class mapElement(pygame.sprite.Sprite):
 
     def getRect(self) -> pygame.Rect:
         return self.image.get_rect()
-
-map1: TiledMap = load_pygame(filename=os.path.join("images", "maps", "map1.tmx"))
-print(map1)
-
-map2: TiledMap = load_pygame(filename=os.path.join("images", "maps", "map2.tmx"))
-print(map2)
-
-map3 = None
-
-map4 = None
 
 pygame.display.quit()

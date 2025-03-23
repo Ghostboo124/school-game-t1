@@ -1,5 +1,6 @@
 from numpy import sqrt
-from pygame import K_LEFT, K_RIGHT, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT, K_ESCAPE
+from pygame import K_LEFT, K_RIGHT, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT
+from pygame.key import ScancodeWrapper
 from sys import stderr
 from sys import exit as __exit
 
@@ -35,7 +36,7 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int
             stderr.write(f"Details:\n\t{details}")
     __exit(errorlevel)
 
-def keychecks(keys, actor: Actor, spd, dt: Optional[float] = None, blockJump: Optional[bool] = False) -> float:
+def keychecks(keys: ScancodeWrapper, actor: Actor, spd, dt: Optional[float] = None, blockJump: Optional[bool] = False) -> float:
     """
     Game Files
     """

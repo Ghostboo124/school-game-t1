@@ -8,5 +8,5 @@ from .map import map as __map
 
 screen = __setMode((1280, 720))
 musicManager = __MusicManager()
-map = __map()
+gameMap = __map()
 # richPresence = __Presence()
