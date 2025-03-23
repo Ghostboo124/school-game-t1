@@ -84,7 +84,7 @@ class map:
         actor.x, actor.y = pos # TODO: FIX THIS
         self.alignToFloor(actor)
     
-    def getGroundLevel(self, map: TiledMap, x: float) -> int:
+    def getGroundLevel(self, map: TiledMap, x: float, y: float) -> int:
         """
         Determine the ground level at a given point on a map
         Args:
@@ -92,30 +92,29 @@ class map:
             x: the x value to look for the ground point at, float
         """
 
-        TiledMap.visible_layers
-
         for layer in map.visible_layers:
             if hasattr(layer, "data"):
                 tileX = int(x // map.tilewidth)
                 if 0 <= tileX < map.width:
                     for tileY in range(map.height):
-                        tileIndex = tileY * map.width + tileX
-                        if layer.data[tileIndex] != 0:
-                            return tileY * map.tileheight
-        return map.height // 2
+                        if tileY * map.tileheight < y:
+                            continue
 
-    def alignToFloor(self, actor: Actor) -> None:
-        if self.currentMap == "map1":
-            groundLevel = self.getGroundLevel(map1, actor.x)
+                        if layer.data[tileY][tileX] != 0:
+                            return tileY * map.tileheight
+        return map.height // 2                   
+
+    def alignToFloor(self, actor: Actor) -> None:                    
+        if self.currentMap == "map1":  
+            groundLevel = self.getGroundLevel(map1, actor.x, actor.y)
         elif self.currentMap == "map2":
-            groundLevel = self.getGroundLevel(map2, actor.x)
+            groundLevel = self.getGroundLevel(map2, actor.x, actor.y)
         elif self.currentMap == "map3":
-            groundLevel = self.getGroundLevel(map3, actor.x)
+            groundLevel = self.getGroundLevel(map3, actor.x, actor.y)
         elif self.currentMap == "map4":
-            groundLevel = self.getGroundLevel(map4, actor.x)
-        else:
+            groundLevel = self.getGroundLevel(map4, actor.x, actor.y)
+        else:                                              
             groundLevel = 380
-        
         actor.y = groundLevel - actor.imageBig.get_height()
 
 def loadGifFrames(path: str) -> list[pygame.Surface]:       
