@@ -37,8 +37,11 @@
         <mxCell id="EDUlIdILLlWNYBkE0sKc-6" value="Is character dead?" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="360" y="260" width="130" height="80" as="geometry" />
         </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-61" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-8" target="EDUlIdILLlWNYBkE0sKc-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-8" value="&lt;div&gt;Tint screen dark gray&lt;/div&gt;&lt;div&gt;Tint screen red&lt;/div&gt;&lt;div&gt;Display game over&lt;/div&gt;&lt;div&gt;Display score and high score&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
-          <mxGeometry x="550" y="270" width="160" height="60" as="geometry" />
+          <mxGeometry x="620" y="270" width="160" height="60" as="geometry" />
         </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-11" target="EDUlIdILLlWNYBkE0sKc-13">
           <mxGeometry relative="1" as="geometry" />
@@ -46,6 +49,28 @@
         <mxCell id="EDUlIdILLlWNYBkE0sKc-56" value="&lt;div&gt;Keychecks&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="EDUlIdILLlWNYBkE0sKc-22">
           <mxGeometry x="0.2889" y="2" relative="1" as="geometry">
             <mxPoint x="-8" y="8" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-59" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-11" target="EDUlIdILLlWNYBkE0sKc-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="360" y="350" />
+              <mxPoint x="300" y="350" />
+              <mxPoint x="300" y="300" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-62" value="&lt;div&gt;If no error&lt;/div&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="EDUlIdILLlWNYBkE0sKc-59">
+          <mxGeometry x="0.0947" y="-3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-63" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-11" target="EDUlIdILLlWNYBkE0sKc-60">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-64" value="If error" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="EDUlIdILLlWNYBkE0sKc-63">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry">
+            <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-11" value="&lt;div&gt;Draw map to screen&lt;/div&gt;&lt;div&gt;Move spSkele and spNugget to floor of map&lt;/div&gt;&lt;div&gt;Keychecks&lt;/div&gt;&lt;div&gt;Move spNugget using return value from keychecks&lt;/div&gt;&lt;div&gt;Draw spSkele to screen&lt;/div&gt;&lt;div&gt;Draw spNugget to screen&lt;/div&gt;" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
@@ -59,8 +84,10 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-13" target="EDUlIdILLlWNYBkE0sKc-25">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-26" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-13">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="410" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-41" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="EDUlIdILLlWNYBkE0sKc-26">
           <mxGeometry x="-0.4" y="1" relative="1" as="geometry">
@@ -70,8 +97,10 @@
         <mxCell id="EDUlIdILLlWNYBkE0sKc-13" value="Is D or Right arrow being pressed" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="140" y="360" width="130" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-36" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-20" target="EDUlIdILLlWNYBkE0sKc-35">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-36" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-20">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="530" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-40" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="EDUlIdILLlWNYBkE0sKc-36">
           <mxGeometry x="-0.3" y="-5" relative="1" as="geometry">
@@ -84,19 +113,19 @@
         <mxCell id="EDUlIdILLlWNYBkE0sKc-20" value="Is A or Left arrow being pressed" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="140" y="490" width="130" height="80" as="geometry" />
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-25" target="EDUlIdILLlWNYBkE0sKc-20">
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-28" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="EDUlIdILLlWNYBkE0sKc-20">
           <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="440" as="sourcePoint" />
             <Array as="points">
               <mxPoint x="70" y="470" />
               <mxPoint x="205" y="470" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-25" value="kRight=1" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="40" y="380" width="60" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-48" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-31" target="EDUlIdILLlWNYBkE0sKc-47">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-48" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-31">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="830" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-49" value="Yes" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="EDUlIdILLlWNYBkE0sKc-48">
           <mxGeometry x="0.24" y="1" relative="1" as="geometry">
@@ -109,8 +138,10 @@
         <mxCell id="EDUlIdILLlWNYBkE0sKc-31" value="Is mouse key being pressed and is spNugget colliding with spSkele" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="130" y="760" width="150" height="140" as="geometry" />
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-43" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-33" target="EDUlIdILLlWNYBkE0sKc-42">
-          <mxGeometry relative="1" as="geometry" />
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-43" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-33">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="100" y="660" as="targetPoint" />
+          </mxGeometry>
         </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-44" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-33" target="EDUlIdILLlWNYBkE0sKc-31">
           <mxGeometry relative="1" as="geometry" />
@@ -123,8 +154,9 @@
         <mxCell id="EDUlIdILLlWNYBkE0sKc-33" value="Is space key being pressed" style="rhombus;whiteSpace=wrap;html=1;" vertex="1" parent="1">
           <mxGeometry x="140" y="610" width="130" height="100" as="geometry" />
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-35" target="EDUlIdILLlWNYBkE0sKc-33">
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-38" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="EDUlIdILLlWNYBkE0sKc-33">
           <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="560" as="sourcePoint" />
             <Array as="points">
               <mxPoint x="70" y="590" />
               <mxPoint x="205" y="590" />
@@ -136,22 +168,18 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-35" value="kLeft=1" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="40" y="500" width="60" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-42" target="EDUlIdILLlWNYBkE0sKc-31">
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-46" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="EDUlIdILLlWNYBkE0sKc-31">
           <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="690" as="sourcePoint" />
             <Array as="points">
               <mxPoint x="70" y="720" />
               <mxPoint x="205" y="720" />
             </Array>
           </mxGeometry>
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-42" value="Make actor jump" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="40" y="630" width="60" height="60" as="geometry" />
-        </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-47" target="EDUlIdILLlWNYBkE0sKc-50">
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-52" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" edge="1" parent="1" target="EDUlIdILLlWNYBkE0sKc-50">
           <mxGeometry relative="1" as="geometry">
+            <mxPoint x="70" y="860" as="sourcePoint" />
             <Array as="points">
               <mxPoint x="70" y="910" />
               <mxPoint x="205" y="910" />
@@ -163,9 +191,6 @@
             <mxPoint as="offset" />
           </mxGeometry>
         </mxCell>
-        <mxCell id="EDUlIdILLlWNYBkE0sKc-47" value="Remove 1 HP from spSkele" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
-          <mxGeometry x="40" y="800" width="60" height="60" as="geometry" />
-        </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-55" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="EDUlIdILLlWNYBkE0sKc-50" target="EDUlIdILLlWNYBkE0sKc-54">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
@@ -174,6 +199,21 @@
         </mxCell>
         <mxCell id="EDUlIdILLlWNYBkE0sKc-54" value="Return the result of the math" style="whiteSpace=wrap;html=1;aspect=fixed;" vertex="1" parent="1">
           <mxGeometry x="160" y="1080" width="90" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-60" value="End" style="ellipse;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="660" y="480" width="120" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-65" value="spSkele.hp -= 1" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;" vertex="1" parent="1">
+          <mxGeometry x="10" y="800" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-66" value="Make Actor jump" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;" vertex="1" parent="1">
+          <mxGeometry x="10" y="620" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-67" value="kLeft=1" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;" vertex="1" parent="1">
+          <mxGeometry x="10" y="500" width="100" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="EDUlIdILLlWNYBkE0sKc-68" value="kRight = 1" style="shape=parallelogram;html=1;strokeWidth=2;perimeter=parallelogramPerimeter;whiteSpace=wrap;rounded=1;arcSize=12;size=0.23;" vertex="1" parent="1">
+          <mxGeometry x="10" y="380" width="100" height="60" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
