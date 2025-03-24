@@ -9,10 +9,11 @@ from PIL import Image
 from pytmx import TiledMap
 from sys import stderr
 from sys import exit as __exit
-from .g import screen, gameMap
+from .g import screen, gameMap, grid
 from .map import map1, map2, map3, map4
 from .keys import keychecks
 from .background import drawBackgrounds, backgrounds
+from .pathfinding import astar, Spot
 
 try:
     from typing import Optional, TYPE_CHECKING
@@ -29,6 +30,22 @@ if TYPE_CHECKING:
     from .actor import Actor
 else:
     class Actor: pass
+
+def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int:
+    """
+    My custom exit function with detail printing
+    Args:
+        errorlevel: The code to exit with, defaults to -1 (unknown error)
+        details: The details of the error code (Optional)
+    """
+    if errorlevel != 0:
+        stderr.write(f"Exiting with error code: {errorlevel}\n")
+    if details is not None:
+        if not isinstance(details, str):
+            stderr.write(f"Type: {type(details)}, Details:\n\t{details}")
+        else:
+            stderr.write(f"Details:\n\t{details}")
+    __exit(errorlevel)
 
 def loadGifFrames(path: str) -> list[pygame.Surface]:
     if not isinstance(path, str):
@@ -72,22 +89,6 @@ def raycast(start: numpy.ndarray, end: numpy.ndarray, obstacles: list) -> bool:
                 return False
     return True
 
-def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int:
-    """
-    My custom exit function with detail printing
-    Args:
-        errorlevel: The code to exit with, defaults to -1 (unknown error)
-        details: The details of the error code (Optional)
-    """
-    if errorlevel != 0:
-        stderr.write(f"Exiting with error code: {errorlevel}\n")
-    if details is not None:
-        if not isinstance(details, str):
-            stderr.write(f"Type: {type(details)}, Details:\n\t{details}")
-        else:
-            stderr.write(f"Details:\n\t{details}")
-    __exit(errorlevel)
-
 class Animation:
     def __init__(self, frames, frame_duration) -> None:
         self.frames = frames
@@ -130,6 +131,7 @@ class Actor(pygame.sprite.Sprite):
         except Exception as e:
             exit(errorlevel=2, details=e)
         self.imageBig: pygame.Surface = pygame.transform.rotozoom(self.image, rotation, zoom)
+        self.imagePath: str = image
         self.name: str = name  
         self.pos: numpy.ndarray[float, float] = pos # type: ignore
         self.x: float = self.pos[0]
@@ -143,7 +145,8 @@ class Actor(pygame.sprite.Sprite):
         self.isJumping: bool = False
         self.jumpVelocity: int = 0
         self.gravity: int = 1
-        self.animation: Animation
+        self.animation: Animation | None = None
+        self.hp = 10
         # print(f"Image: {image} name: {name} disabled: {disabled} pos: {pos} animation_path: {animation_path} zoom: {zoom} rotation: {rotation} m: {m} v: {v} spd: {spd}")
         if None != animation_path:
             frames: list[Surface] = loadGifFrames(path=animation_path) # type: ignore
@@ -158,10 +161,15 @@ class Actor(pygame.sprite.Sprite):
             if self.x < 0:
                 #self.x = 0
                 self.x = screen.get_width() - self.imageBig.get_width()
+                if self.name == "spNugget":
+                    print(gameMap.switchMap(map=gameMap.getPrevMap()))
+                print(self.name)
             elif self.x > screen.get_width() - self.imageBig.get_width():
                 #self.x = screen.get_width() - self.image.get_width() - 40 ### Commented lines are the original lines that make sure that the 
                 self.x = 0                                                 ### character doesn't go off the screen, this has been replaced by
-                                                                           ### the character moving to the other side of the screen
+                if self.name == "spNugget":                                ### the character moving to the other side of the screen
+                    print(gameMap.switchMap(map=gameMap.getNextMap()))
+                print(self.name)
             if self.y < 0:
                 #self.y = 0
                 self.y = screen.get_height() - self.imageBig.get_height() - 40
@@ -200,27 +208,37 @@ class Actor(pygame.sprite.Sprite):
             targetPos: numpy.ndarray = target
         # print(raycast(self.pos, targetPos, None))
 
-        x: float = targetPos[0] - self.x
-        y: float = targetPos[1] - self.y
-        direction: numpy.ndarray = numpy.array(object=(x, y))
-        distance: numpy.floating = numpy.linalg.norm(direction)
-        
-        if distance > 0:
-            direction = direction / distance # Normalise the vector
-            if direction[1] <= -1 or direction[1] >= 0:
-                # print(direction[1])
-                return
-            self.pos += direction * self.spd * dt # type: ignore
-            self.x, self.y = self.pos
-            # print(f"New Pos: {self.pos}")
-        else:
-            if isinstance(target, Actor):
-                self.attack(target=target)
+        startNode = Spot(row=int(self.y // 32), col=int(self.x // 32), width=32, total_rows=len(grid))
+        endNode = Spot(row=int(targetPos[1] // 32), col=int(targetPos[0] // 32), width=32, total_rows=len(grid))
+
+        path: list[Spot] | None = astar(grid=grid, start=startNode, end=endNode)
+
+        if path != None:
+            nextNode: Spot = path[-1]
+            x: float = nextNode.x - self.x
+            y: float = nextNode.y - self.y
+            direction: numpy.ndarray = numpy.array((x, y))
+            distance: numpy.floating = numpy.linalg.norm(direction)
+
+            if distance > 0:
+                direction = direction / distance # Normalise the vector
+                self.pos += direction * self.spd * dt # type: ignore
+                self.x, self.y = self.pos
+                self.update(self.x, self.y)
+                # print(f"New pos: {self.pos}")
             else:
-                print("Can't attack, target is not an Actor")
+                if isinstance(target, Actor):
+                    self.attack(target=target)
+                else:
+                    print("Can't attack, target is not an Actor")
+        else:
+            print("Path is none?")
     
     def attack(self: Actor, target: Actor):
-        print("No!")
+        target.hp -= 1
+        if self.hp > 10:
+            self.hp += 1
+        print(f"{target.hp=}, {self.hp=}")
 
     def destroy(self: Actor) -> None:
         self.disabled = True
@@ -230,9 +248,9 @@ class Actor(pygame.sprite.Sprite):
         
     def isColliding(self, object: numpy.ndarray | Actor | TiledMap | str) -> bool:
         """
-        Check if the actor is colliding with a solid tile in the map.
+        Check if the actor is colliding with a given object.
         Args:
-            object: The object to check collision with, can be an array, an Actor or a map
+            object: The object to check collision with, can be an array, an Actor, or a map (the name or the map itself)
         """
         actorRect: pygame.Rect = self.imageBig.get_rect(topleft=(self.x, self.y))
 
@@ -259,8 +277,10 @@ class Actor(pygame.sprite.Sprite):
                     
                     startX = int(self.x // tileWidth)
                     startY = int(self.y // tileHeight)
-                    endX: int = startX + 2
-                    endY: int = startY + 2
+                    # endX: int = startX + 2
+                    endX: int = int((self.x + self.imageBig.get_width()) // tileWidth)
+                    # endY: int = startY + 2
+                    endY: int = int((self.y + self.imageBig.get_height()) // tileHeight)
 
                     for tileX in range(max(0, startX), min(endX, mapWidth)):
                         for tileY in range(max(0, startY), min(endY, mapHeight)):
@@ -277,7 +297,7 @@ class Actor(pygame.sprite.Sprite):
         elif isinstance(object, numpy.ndarray):
             return actorRect.collidepoint(object[0], object[1])
         
-        return True
+        return False
     
     def jump(self) -> None:
         """

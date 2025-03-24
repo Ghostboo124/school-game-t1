@@ -1,5 +1,6 @@
-from numpy import sqrt
-from pygame import K_LEFT, K_RIGHT, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT
+from numpy import float64, sqrt
+from pygame import K_LEFT, K_RIGHT, MOUSEBUTTONDOWN, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT
+from pygame.mouse import get_pressed
 from pygame.key import ScancodeWrapper
 from sys import stderr
 from sys import exit as __exit
@@ -36,7 +37,7 @@ def exit(errorlevel: int = -1, details: Optional[Exception | str] = None) -> int
             stderr.write(f"Details:\n\t{details}")
     __exit(errorlevel)
 
-def keychecks(keys: ScancodeWrapper, actor: Actor, spd, dt: Optional[float] = None, blockJump: Optional[bool] = False) -> float:
+def keychecks(keys: ScancodeWrapper, actor: Actor, spd, spNugget: Actor, spSkele: Actor, dt: Optional[float] = None, blockJump: Optional[bool] = False) -> tuple[bool, float]:
     """
     Game Files
     """
@@ -67,16 +68,20 @@ def keychecks(keys: ScancodeWrapper, actor: Actor, spd, dt: Optional[float] = No
         raise Exception("Keybind Interrupt")
     if keys[K_q]:
         exit(0)
+    if any(get_pressed(num_buttons=3)) and spNugget.isColliding(spSkele):
+        attack = True
+    else:
+        attack = False
 
     moveH = kRight - kLeft
     # moveV = kDown - kUp
 
-    Mag = sqrt((moveH * moveH))# + (moveV * moveV)
+    Mag: float64 = sqrt((moveH * moveH))# + (moveV * moveV)
 
     if Mag == 0:
-        Mag = 1 * dt
+        Mag = 1 * float64(dt)
     
     moveX = (moveH / Mag) * spd
     # moveY = (moveV / Mag) * spd
 
-    return moveX
+    return (moveX, attack)

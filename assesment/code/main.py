@@ -10,8 +10,11 @@ Error Codes:
 """
 
 # Imports
+import glob
+from venv import create
 from pygame.key import ScancodeWrapper
 from game.actor import Actor, uiElement
+from game.pathfinding import Spot, createGrid
 
 
 try:
@@ -21,9 +24,9 @@ try:
     import time
     import os
     import sys
-    from game import Actor, uiElement, bg, gameMap
-    from game import keychecks, drawBackgrounds, drawMap
-    from game import screen, musicManager, map1, map2, map3, map4
+    from game import Actor, uiElement, bg
+    from game import keychecks, drawBackgrounds, drawMap, astar
+    from game import screen, musicManager, map1, map2, map3, map4, gameMap, grid
     from game.background import backgrounds
     print('Trying to import typing')
     # Need to try typing then typing_extensions for backwards compatibility
@@ -59,6 +62,7 @@ for i in backgrounds:
     backgroundsPause[-1].x = i.x
     backgroundsPause[-1].imageFillerX = i.imageFillerX
 tint.append(bg(os.path.join("images", "darkFilter.png")))
+tint.append(bg(os.path.join("images", "redFilter.png")))
 clock = pygame.time.Clock()
 running = True
 paused = False
@@ -88,19 +92,36 @@ zoom = 2.0
 v = 10
 m = 1
 spNugget = Actor(image=os.path.join("images", "spNugget.png"), name="spNugget", disabled=False, pos=numpy.array(object=(0, 200), dtype=float), animation_path=os.path.join("images", "spNuggetIdle.gif"), zoom=zoom, rotation=rot, m=m, v=v, spd=spd) # type: ignore
-spSkele  = Actor(image=os.path.join("images", "spSkeleIdle.gif"), name="spSkele", disabled=False, pos=numpy.array(object=(380, 380), dtype=float), animation_path=os.path.join("images", "spSkeleIdle.gif"), zoom=4, rotation=0, m=1, v=5, spd=20) # type: ignore
+spSkele  = Actor(image=os.path.join("images", "spSkeleIdle.gif"), name="spSkele", disabled=False, pos=numpy.array(object=(380, 380), dtype=float), animation_path=os.path.join("images", "spSkeleIdle.gif"), zoom=4, rotation=0, m=1, v=5, spd=2000) # type: ignore
 
 gameMap.alignToFloor(actor=spNugget)
 gameMap.alignToFloor(actor=spSkele)
 
-spClose = uiElement(image=os.path.join("images", "closeUp.png"), name="spClose", disabled=True, pos=(50, 50), zoom=4, rotation=0)
-spPlay  = uiElement(image=os.path.join("images", "playUp.png"),  name="spPlay",  disabled=True, pos=(114, 50), zoom=4, rotation=0)
+# spClose = uiElement(image=os.path.join("images", "closeUp.png"), name="spClose", disabled=True, pos=(50, 50), zoom=4, rotation=0)
+# spPlay  = uiElement(image=os.path.join("images", "playUp.png"),  name="spPlay",  disabled=True, pos=(114, 50), zoom=4, rotation=0)
 
 def main(dt: float, fps: int) -> int:
+    global paused
     keys: ScancodeWrapper = pygame.key.get_pressed()
-    moveX: float = keychecks(keys, spNugget, spd, dt, False)
+    moveX, canAttack = keychecks(keys, spNugget, spd, spNugget, spSkele, dt, False)
     drawBackgrounds(backgrounds)
-    drawMap(map1)
+    currentMap: str = gameMap.currentMap
+    if currentMap not in gameMap.maps:
+        print(f"Failed to draw {currentMap=}. It isn't in the list of maps.")
+    elif currentMap == "map1":
+        drawMap(map1)
+    elif currentMap == "map2":
+        grid: list[list[Spot]] = createGrid(mapData=map2)
+        drawMap(map2)
+    elif currentMap == "map3":
+        grid: list[list[Spot]] = createGrid(mapData=map3)
+        drawMap(map3)
+    elif currentMap == "map4":
+        grid: list[list[Spot]] = createGrid(mapData=map4)
+        drawMap(map4)
+    else:
+        print(f"Failed to draw {currentMap=}")
+
     for background in backgrounds:
         for pauseBackground in backgroundsPause:
             if background.imagePath != pauseBackground.imagePath:
@@ -110,21 +131,31 @@ def main(dt: float, fps: int) -> int:
 
     # spNugget.destroy()
     if spNugget.disabled == False:
+        gameMap.alignToFloor(actor=spNugget)
         newX: float = spNugget.x + moveX
         newY: float = spNugget.y
+        tempActor: Actor = Actor(image=spNugget.imagePath, name="spTemp", disabled=spNugget.disabled, pos=spNugget.pos, animation_path=None, zoom=zoom, rotation=rot, m=spNugget.m, v=spNugget.v, spd=spNugget.spd)
+        tempActor.update(x=newX, y=newY, image=spNugget.imagePath)
 
-        tempActor: Actor = spNugget
-        tempActor.x = newX
-        tempActor.y = newY
-
-        if not tempActor.isColliding(gameMap.currentMap) or not tempActor.isColliding(spSkele):
-            gameMap.alignToFloor(actor=spNugget)
+        if not tempActor.isColliding(object=gameMap.currentMap):
+            spNugget.jump()
+            if canAttack == True:
+                spNugget.attack(target=spSkele)
             spNugget.update(x=newX, y=newY, image="images\\spNugget.png", zoom=zoom, dt=dt)
         else:
-            print("spNugget colliding with map or spSkele!")
-            spNugget.x = spNugget.x
-            spNugget.y = spNugget.y
+            pass
+            print("spNugget is colliding with the map!")
+
+        if not tempActor.isColliding(object=spSkele):
+            spNugget.jump()
+            spNugget.update(x=newX, y=newY, image="images\\spNugget.png", zoom=zoom, dt=dt)
+        else:
+            pass
+            print("spNugget is colliding with spSkele!")
     
+        if spNugget.hp <= 0:
+            paused = True
+
         spNugget.draw()
 
         if debug:
@@ -132,16 +163,18 @@ def main(dt: float, fps: int) -> int:
     
     if spSkele.disabled == False:
         gameMap.alignToFloor(actor=spSkele)
-        if not spSkele.isColliding(spNugget):
-            if not spSkele.isColliding(gameMap.currentMap):
-                if random.randint(0, 100) in range(0,90):
-                    spSkele.moveTowards(target=spNugget, dt=dt)
-                # spSkele.applyGravity(moveX=0, dt=dt)
-                spSkele.update(x=spSkele.x, y=spSkele.y, dt=dt)
-            else:
-                print("spSkele with map")
+
+        if not spSkele.isColliding(object=spNugget):
+            spSkele.moveTowards(target=spNugget,dt=dt)
         else:
-            print("Colliding with spNugget")
+            pass
+            print("spSkele is colliding with spNugget!")
+        
+        print(spSkele.hp)
+        if spSkele.hp <= 0:
+            print("spSkele has been destroyed!")
+            spSkele.destroy()
+    
         spSkele.draw()
     return fps
 
@@ -158,7 +191,7 @@ if __name__ == "__main__":
                 if event.type == pygame.QUIT: running = False
                 elif event.type == pygame.KEYDOWN: 
                     if event.key == pygame.K_ESCAPE: 
-                        paused = not paused
+                        paused: bool = not paused
                         if paused == True:
                             musicManager.pause()
                         else:
@@ -181,14 +214,23 @@ if __name__ == "__main__":
                 drawBackgrounds(backgroundsPause)
                 spNugget.draw()
                 spSkele.draw()
+                currentMap: str = gameMap.currentMap
+                if currentMap not in gameMap.maps:
+                    print(f"Failed to draw map {currentMap=}. It isn't in the list of maps.")
+                elif currentMap == "map1":
+                    drawMap(map1)
+                elif currentMap == "map2":
+                    drawMap(map2)
+                elif currentMap == "map3":
+                    drawMap(map3)
+                elif currentMap == "map4":
+                    drawMap(map4)
+                else:
+                    print(f"Failed to draw map, {currentMap=}")
                 drawBackgrounds(tint)
 
                 # Pause menu UI and extra scripts
-                keychecks(pygame.key.get_pressed(), spNugget, spd, dt, True)
-                spClose.disabled = False
-                spPlay.disabled = False
-                spClose.draw()
-                spPlay.draw()
+                keychecks(pygame.key.get_pressed(), spNugget, spd, spNugget, spSkele, dt, True)
 
                 pygame.display.flip()
     # except Exception as e:
