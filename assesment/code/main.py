@@ -10,24 +10,17 @@ Error Codes:
 """
 
 # Imports
-import glob
-from venv import create
-from pygame.key import ScancodeWrapper
-from game.actor import Actor, uiElement
-from game.pathfinding import Spot, createGrid
-
-
 try:
     import pygame
-    import random
+    from pygame.key import ScancodeWrapper
     import numpy
-    import time
     import os
     import sys
     from game import Actor, uiElement, bg
-    from game import keychecks, drawBackgrounds, drawMap, astar
+    from game import keychecks, drawBackgrounds, drawMap
     from game import screen, musicManager, map1, map2, map3, map4, gameMap, grid
     from game.background import backgrounds
+    from game.pathfinding import Spot, createGrid
     print('Trying to import typing')
     # Need to try typing then typing_extensions for backwards compatibility
     try:
@@ -138,7 +131,7 @@ def main(dt: float, fps: int) -> int:
         tempActor.update(x=newX, y=newY, image=spNugget.imagePath)
 
         if not tempActor.isColliding(object=gameMap.currentMap):
-            spNugget.jump()
+            spNugget.applyGravity(moveX, dt)
             if canAttack == True:
                 spNugget.attack(target=spSkele)
             spNugget.update(x=newX, y=newY, image="images\\spNugget.png", zoom=zoom, dt=dt)

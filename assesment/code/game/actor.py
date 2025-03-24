@@ -113,13 +113,14 @@ class Actor(pygame.sprite.Sprite):
             image: The image to set this Actor to be displayed as, string with the path to the image
             name: The name of the Actor, string
             disabled: Is the Actor disabled, boolean
-            pos: The position to set the Actor to in the format of (x, y), (Defaults to (0,0)), either a tuple of a numpy array
+            pos: The position to set the Actor to in the format of (x, y), (Defaults to (0,0)), a numpy array
+            animation_path: The path for the animation to be played, Optional, str
             zoom: How much to zoom the image in by, Optional, defaults to 1.0, float
             rotation: How much to rotate the image, Optional, defaults to 0.0, float
             m: Mass, defaults to 1, int
             v: Velocity, defaults to 5, int
             spd: The speed of the Actor, defaults to 1, int
-        """# TODO: UPDATE THIS!
+        """
         super().__init__()
         try:
             if image.split(sep=".")[1] == "gif":
@@ -317,9 +318,6 @@ class Actor(pygame.sprite.Sprite):
                 self.y = 380
                 self.isJumping = False
             self.x += moveX
-        if self.y < 380 and self.isJumping == False:
-            self.y -= self.jumpVelocity
-            self.jumpVelocity -= self.gravity
 
 class uiElement(Actor):
     def __init__(self, image, name, disabled, pos = (0, 0), zoom = 1, rotation = 0):

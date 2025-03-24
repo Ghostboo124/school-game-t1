@@ -70,11 +70,11 @@ class bg:
         screen.blit(source=self.image, dest=(self.x, 0))
         screen.blit(source=self.image, dest=(self.imageFillerX, 0))
 
-def drawBackgrounds(backgrounds: list[bg]):
+def drawBackgrounds(backgrounds: list[bg]) -> None:
     for i in backgrounds:
         i.drawBackground()
 
-def drawMap(map: TiledMap):
+def drawMap(map: TiledMap) -> None:
     for layer in map.layers:
         # print(layer)
         # print(map.objects) # type: ignore
