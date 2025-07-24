@@ -15,7 +15,10 @@ __all__: list[str] = [
     "drawBackgrounds",
     "drawMap",
     "keychecks",
-    "screen"
+    "screen",
+    "musicManager",
+    "gameMap",
+    "grid"
 ]
 
 __title__ = "Game"

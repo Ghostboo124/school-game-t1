@@ -1,3 +1,4 @@
+from sys import stderr, exit as __exit
 import pygame
 import numpy
 from queue import PriorityQueue
@@ -7,12 +8,11 @@ try:
     from typing import TYPE_CHECKING, Any, Optional
 except (ImportError, OSError):
     try:
-        print("Error whilst importing typing!\nFalling back to typing_extensions")
+        stderr.write("Error whilst importing typing!\nFalling back to typing_extensions")
         from typing_extensions import TYPE_CHECKING, Any, Optional
     except ImportError:
-        print("Error has occured whilst importing typing_extensions!")
-        print("Using internal typing, this may not be up to date, please fix your python.")
-        from .__typing import TYPE_CHECKING, Any, Optional
+        stderr.write("Error has occured whilst importing typing_extensions!")
+        __exit(1)
 
 if TYPE_CHECKING:
     from .pathfinding import Spot

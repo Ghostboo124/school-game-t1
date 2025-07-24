@@ -19,12 +19,11 @@ try:
     from typing import Optional, TYPE_CHECKING
 except (ImportError, OSError):
     try:
-        print("Error whilst importing typing!\nFalling back to typing_extensions")
+        stderr.write("Error whilst importing typing!\nFalling back to typing_extensions")
         from typing_extensions import Optional, TYPE_CHECKING
     except ImportError:
-        print("Error has occured whilst importing typing_extensions!")
-        print("Using internal typing, this may not be up to date, please fix your python.")
-        from .__typing import Optional, TYPE_CHECKING
+        stderr.write("Error has occured whilst importing typing_extensions!")
+        __exit(1)
 
 if TYPE_CHECKING:
     from .actor import Actor

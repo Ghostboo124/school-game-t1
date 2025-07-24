@@ -10,6 +10,9 @@ Error Codes:
 """
 
 # Imports
+from sympy import N
+
+
 try:
     import pygame
     from pygame.key import ScancodeWrapper
@@ -28,18 +31,20 @@ try:
         print('Typing has been imported successfully')
     except ImportError:
         try:
-            from typing_extensions import Optional
             sys.stderr.write('Typing failed, falling back to typing_extensions')
+            from typing_extensions import Optional
         except (ImportError, OSError):
-            sys.stderr.write("Importing custom typing, this doesn't get updated, please fix your python")
-            from game.__typing import Optional
+            sys.stderr.write("Cannot import typing or typing_extensions!")
+            sys.exit(1)
         except Exception as e:
             sys.stderr.write(f'typing_extensions has failed to import, printing details now:\n\t{e}')
+            sys.exit(1)
 except ImportError as e:
-    print(f"Something has gone wrong while importing something, printing details now:\n\t{e.msg}")
+    sys.stderr.write(f"Something has gone wrong while importing something, printing details now:\n\t{e.msg}")
+    sys.exit(1)
 except Exception as e:
     # Can't use my exit function here, and I am not willing to place it earlier for organisational reasons
-    print(f"Unknown error occured, printing details now:\n\t{e}")
+    sys.stderr.write(f"Unknown error occured, printing details now:\n\t{e}")
     sys.exit(1)
 
 # Initialisation
@@ -48,8 +53,8 @@ pygame.init()
 # musicManager has been defined in the `game` module
 # richPresence has been defined in the `game` module
 # map has been defined in the `game` module
-backgroundsPause = list[bg]()
-tint = list[bg]()
+backgroundsPause: list[bg] = []
+tint: list[bg] = []
 for i in backgrounds:
     backgroundsPause.append(bg(i.imagePath))
     backgroundsPause[-1].x = i.x
@@ -171,6 +176,7 @@ def main(dt: float, fps: int) -> int:
         spSkele.draw()
     return fps
 
+fps = 60
 if __name__ == "__main__":
     try:
         tick = 0
@@ -192,14 +198,14 @@ if __name__ == "__main__":
             screen.fill("black")
             # print(paused)
             if paused == False:
-                if tick != 0:
-                    # print(f"FPS: {clock.get_fps()} DT: {dt} Raw Time: {clock.get_rawtime()} Time: {clock.get_time()}")
-                    fps: int = main(dt=dt, fps=fps)
-                    dt: float = clock.tick(fps) / 1000
-                else:
+                if tick == 0:
                     dt = clock.tick(2) / 1000
                     fps = 60
                     tick += 1
+                else:
+                    # print(f"FPS: {clock.get_fps()} DT: {dt} Raw Time: {clock.get_rawtime()} Time: {clock.get_time()}")
+                    fps: int = main(dt=dt, fps=fps)
+                    dt: float = clock.tick(fps) / 1000
                 pygame.display.flip()
                 # richPresence.update(pid=os.getpid(), activity_type=0, details="Alex's Assigment")
             else:

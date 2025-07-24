@@ -3,21 +3,20 @@ The file to deal with backgrounds
 """
 import pygame
 from os.path import join as joinPath
-from numpy import ndarray
 from pytmx import TiledMap, TiledTileLayer
 import pytmx
+from sys import exit as __exit, stderr
 from .g import screen
 
 try:
     from typing import Optional
 except ImportError:
     try:
-        print("Error whilst importing typing!\nFalling back to typing_extensions")
+        stderr.write("Error whilst importing typing!\nFalling back to typing_extensions")
         from typing_extensions import Optional
     except ImportError:
-        print("Error has occured whilst importing typing_extensions!")
-        print("Using internal typing, this may not be up to date, please fix your python.")
-        from .__typing import Optional
+        stderr.write("Error has occured whilst importing typing_extensions!")
+        __exit(1)
 
 class bg:
     def __init__(self, image: str, xchange: Optional[int] = None):
@@ -34,7 +33,8 @@ class bg:
         self.imageWidth: int = self.image.get_width()
         self.imageFillerX: int = self.x + self.imageWidth
     
-    def __loadAndScale(self, image_path: str) -> pygame.Surface:
+    @staticmethod
+    def __loadAndScale(image_path: str) -> pygame.Surface:
         """
         A private function to load and scale an image
         Args:

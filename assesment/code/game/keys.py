@@ -2,19 +2,17 @@ from numpy import float64, sqrt
 from pygame import K_LEFT, K_RIGHT, MOUSEBUTTONDOWN, K_d, K_a, K_SPACE, K_q, K_LSHIFT, K_RSHIFT
 from pygame.mouse import get_pressed
 from pygame.key import ScancodeWrapper
-from sys import stderr
-from sys import exit as __exit
+from sys import stderr, exit as __exit
 
 try:
     from typing import Optional, TYPE_CHECKING
 except (ImportError, OSError):
     try:
-        print("Error whilst importing typing!\nFalling back to typing_extensions")
+        stderr.write("Error whilst importing typing!\nFalling back to typing_extensions")
         from typing_extensions import Optional, TYPE_CHECKING
     except ImportError:
-        print("Error has occured whilst importing typing_extensions!")
-        print("Using internal typing, this may not be up to date, please fix your python.")
-        from .__typing import Optional, TYPE_CHECKING
+        stderr.write("Error has occured whilst importing typing_extensions!")
+        __exit(1)
 
 if TYPE_CHECKING:
     from .actor import Actor

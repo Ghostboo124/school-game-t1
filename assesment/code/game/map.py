@@ -1,3 +1,4 @@
+from sys import stderr, exit as __exit
 from PIL.ImageFile import ImageFile
 import pygame
 from pytmx import load_pygame
@@ -25,12 +26,11 @@ try:
     from typing import Optional, Any, TYPE_CHECKING
 except ImportError:
     try:
-        print("Error whilst importing typing!\nFalling back to typing_extensions")
+        stderr.write("Error whilst importing typing!\nFalling back to typing_extensions")
         from typing_extensions import Optional, Any, TYPE_CHECKING
     except ImportError:
-        print("Error has occured whilst importing typing_extensions!")
-        print("Using internal typing, this may not be up to date, please fix your python.")
-        from .__typing import Optional, Any, TYPE_CHECKING
+        stderr.write("Error has occured whilst importing typing_extensions!")
+        __exit(1)
 
 if TYPE_CHECKING:
     from .actor import Actor
@@ -71,12 +71,12 @@ class map:
     def switchMap(self, map: Optional[str] = None) -> str:
         if map == None:
             if isinstance(self.getNextMap, str):
-                self.currentMap = self.getNextMap()
+                self.currentMap = self.getNextMap
             else:
                 return self.currentMap
         else:
             if map not in self.maps:
-                return map
+                return self.currentMap
             else:
                 self.currentMap = map
         return self.currentMap
@@ -84,7 +84,8 @@ class map:
         actor.x, actor.y = pos # TODO: FIX THIS
         self.alignToFloor(actor)
     
-    def getGroundLevel(self, map: TiledMap, x: float, y: float) -> int:
+    @staticmethod
+    def getGroundLevel(map: TiledMap, x: float, y: float) -> int:
         """
         Determine the ground level at a given point on a map
         Args:
